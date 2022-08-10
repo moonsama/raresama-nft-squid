@@ -1,0 +1,53 @@
+module.exports = class Data1660125258206 {
+  name = 'Data1660125258206'
+
+  async up(db) {
+    await db.query(`CREATE TABLE "metadata" ("id" character varying NOT NULL, "name" text, "description" text, "image" text, "external_url" text NOT NULL, "attributes" jsonb, "type" text, "composite" boolean, "layers" text array, "artist" text, "artist_url" text, CONSTRAINT "PK_56b22355e89941b9792c04ab176" PRIMARY KEY ("id"))`)
+    await db.query(`CREATE TABLE "transfer" ("id" character varying NOT NULL, "timestamp" numeric NOT NULL, "block" integer NOT NULL, "transaction_hash" text NOT NULL, "token_id" character varying, "from_id" character varying, "to_id" character varying, CONSTRAINT "PK_fd9ddbdd49a17afcbe014401295" PRIMARY KEY ("id"))`)
+    await db.query(`CREATE INDEX "IDX_b27b1150b8a7af68424540613c" ON "transfer" ("token_id") `)
+    await db.query(`CREATE INDEX "IDX_76bdfed1a7eb27c6d8ecbb7349" ON "transfer" ("from_id") `)
+    await db.query(`CREATE INDEX "IDX_0751309c66e97eac9ef1149362" ON "transfer" ("to_id") `)
+    await db.query(`CREATE TABLE "owner_transfer" ("id" character varying NOT NULL, "direction" character varying(4) NOT NULL, "owner_id" character varying, "transfer_id" character varying, CONSTRAINT "PK_abcef51042537f7bbf443346383" PRIMARY KEY ("id"))`)
+    await db.query(`CREATE INDEX "IDX_9e14a1fe72ddc7447a262c6a05" ON "owner_transfer" ("owner_id") `)
+    await db.query(`CREATE INDEX "IDX_cc86cf88fef8b29f6d2c9ea2d8" ON "owner_transfer" ("transfer_id") `)
+    await db.query(`CREATE TABLE "owner" ("id" character varying NOT NULL, "balance" numeric NOT NULL, CONSTRAINT "PK_8e86b6b9f94aece7d12d465dc0c" PRIMARY KEY ("id"))`)
+    await db.query(`CREATE TABLE "contract" ("id" character varying NOT NULL, "name" text, "symbol" text, "total_supply" numeric NOT NULL, "contract_uri" text, "contract_uri_updated" numeric, "contract_uri_updated_block" integer, "address" text NOT NULL, "decimals" integer, CONSTRAINT "PK_17c3a89f58a2997276084e706e8" PRIMARY KEY ("id"))`)
+    await db.query(`CREATE TABLE "token" ("id" character varying NOT NULL, "numeric_id" numeric NOT NULL, "token_uri" text, "composite_token_uri" text, "metadata_updated" numeric, "metadata_updated_block" integer, "owner_id" character varying, "contract_id" character varying, "metadata_id" character varying, CONSTRAINT "PK_82fae97f905930df5d62a702fc9" PRIMARY KEY ("id"))`)
+    await db.query(`CREATE INDEX "IDX_77fa31a311c711698a0b944382" ON "token" ("owner_id") `)
+    await db.query(`CREATE INDEX "IDX_5c85dbbd108d915a13f71de39a" ON "token" ("contract_id") `)
+    await db.query(`CREATE INDEX "IDX_69858f47995fd449579fa32505" ON "token" ("metadata_id") `)
+    await db.query(`ALTER TABLE "transfer" ADD CONSTRAINT "FK_b27b1150b8a7af68424540613c7" FOREIGN KEY ("token_id") REFERENCES "token"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
+    await db.query(`ALTER TABLE "transfer" ADD CONSTRAINT "FK_76bdfed1a7eb27c6d8ecbb73496" FOREIGN KEY ("from_id") REFERENCES "owner"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
+    await db.query(`ALTER TABLE "transfer" ADD CONSTRAINT "FK_0751309c66e97eac9ef11493623" FOREIGN KEY ("to_id") REFERENCES "owner"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
+    await db.query(`ALTER TABLE "owner_transfer" ADD CONSTRAINT "FK_9e14a1fe72ddc7447a262c6a057" FOREIGN KEY ("owner_id") REFERENCES "owner"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
+    await db.query(`ALTER TABLE "owner_transfer" ADD CONSTRAINT "FK_cc86cf88fef8b29f6d2c9ea2d8b" FOREIGN KEY ("transfer_id") REFERENCES "transfer"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
+    await db.query(`ALTER TABLE "token" ADD CONSTRAINT "FK_77fa31a311c711698a0b9443823" FOREIGN KEY ("owner_id") REFERENCES "owner"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
+    await db.query(`ALTER TABLE "token" ADD CONSTRAINT "FK_5c85dbbd108d915a13f71de39ad" FOREIGN KEY ("contract_id") REFERENCES "contract"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
+    await db.query(`ALTER TABLE "token" ADD CONSTRAINT "FK_69858f47995fd449579fa325054" FOREIGN KEY ("metadata_id") REFERENCES "metadata"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
+  }
+
+  async down(db) {
+    await db.query(`DROP TABLE "metadata"`)
+    await db.query(`DROP TABLE "transfer"`)
+    await db.query(`DROP INDEX "public"."IDX_b27b1150b8a7af68424540613c"`)
+    await db.query(`DROP INDEX "public"."IDX_76bdfed1a7eb27c6d8ecbb7349"`)
+    await db.query(`DROP INDEX "public"."IDX_0751309c66e97eac9ef1149362"`)
+    await db.query(`DROP TABLE "owner_transfer"`)
+    await db.query(`DROP INDEX "public"."IDX_9e14a1fe72ddc7447a262c6a05"`)
+    await db.query(`DROP INDEX "public"."IDX_cc86cf88fef8b29f6d2c9ea2d8"`)
+    await db.query(`DROP TABLE "owner"`)
+    await db.query(`DROP TABLE "contract"`)
+    await db.query(`DROP TABLE "token"`)
+    await db.query(`DROP INDEX "public"."IDX_77fa31a311c711698a0b944382"`)
+    await db.query(`DROP INDEX "public"."IDX_5c85dbbd108d915a13f71de39a"`)
+    await db.query(`DROP INDEX "public"."IDX_69858f47995fd449579fa32505"`)
+    await db.query(`ALTER TABLE "transfer" DROP CONSTRAINT "FK_b27b1150b8a7af68424540613c7"`)
+    await db.query(`ALTER TABLE "transfer" DROP CONSTRAINT "FK_76bdfed1a7eb27c6d8ecbb73496"`)
+    await db.query(`ALTER TABLE "transfer" DROP CONSTRAINT "FK_0751309c66e97eac9ef11493623"`)
+    await db.query(`ALTER TABLE "owner_transfer" DROP CONSTRAINT "FK_9e14a1fe72ddc7447a262c6a057"`)
+    await db.query(`ALTER TABLE "owner_transfer" DROP CONSTRAINT "FK_cc86cf88fef8b29f6d2c9ea2d8b"`)
+    await db.query(`ALTER TABLE "token" DROP CONSTRAINT "FK_77fa31a311c711698a0b9443823"`)
+    await db.query(`ALTER TABLE "token" DROP CONSTRAINT "FK_5c85dbbd108d915a13f71de39ad"`)
+    await db.query(`ALTER TABLE "token" DROP CONSTRAINT "FK_69858f47995fd449579fa325054"`)
+  }
+}

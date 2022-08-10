@@ -1,23 +1,67 @@
+type Attribute @jsonField {
+  # display_type field of metadata attributes
+  displayType: String
+  # trait_type field of metadata attributes
+  traitType: String!
+  value: String!
+}
+
+# these values come from the fetched metadata object from the token URI
+type Metadata @entity {
+  id: ID!
+  name: String
+  description: String
+  image: String
+  # external_url field of metadata
+  externalUrl: String!
+  attributes: [Attribute!]
+  type: String
+  composite: Boolean
+  layers: [String!]
+  artist: String
+  # artist_url field of metadata
+  artistUrl: String
+}
+
 type Token @entity {
   id: ID!
+  numericId: BigInt!
   owner: Owner
-  uri: String
+  # tokenURI of contract
+  tokenUri: String
+  # compositeURI of contract
+  compositeTokenUri: String
+  # timestamp when the token URIs were updated last
+  metadataUpdated: BigInt
   transfers: [Transfer!]! @derivedFrom(field: "token")
-  contract: Contract
+  contract: Contract!
+  metadata: Metadata
 }
 
 type Owner @entity {
   id: ID!
   ownedTokens: [Token!]! @derivedFrom(field: "owner")
-  balance: BigInt
+  # amount of tokens
+  balance: BigInt!
+  transfers: [OwnerTransfer!] @derivedFrom(field: "owner")
+
 }
 
+# Generic contract stats
 type Contract @entity {
+  # 1
   id: ID!
   name: String
   symbol: String
-  totalSupply: BigInt
+  #updated on each mint/burn
+  totalSupply: BigInt!
   mintedTokens: [Token!]! @derivedFrom(field: "contract")
+  # contract URI updated once e.g. a day
+  contractURI: String
+  # timestamp when the contract URI was updated last
+  contractURIUpdated: BigInt
+  address: String!
+  decimals: Int
 }
 
 type Transfer @entity {
@@ -28,4 +72,16 @@ type Transfer @entity {
   timestamp: BigInt!
   block: Int!
   transactionHash: String!
+}
+
+enum Direction {
+  FROM
+  TO
+}
+
+type OwnerTransfer @entity {
+  id: ID!
+  owner: Owner
+  transfer: Transfer!
+  direction: Direction!
 }
