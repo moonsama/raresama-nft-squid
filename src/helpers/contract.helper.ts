@@ -4,6 +4,6 @@ import {contracts} from '../utils/entitiesManager'
 
 export async function isKnownContract(db: Store, contractAddress: string, block: number): Promise<boolean> {
   const contract = await contracts.getByAddress(db,getAddress(contractAddress))
-  return contract != null && contract.startBlock >= block
+  return contract != null && contract.startBlock < block
 }
 
