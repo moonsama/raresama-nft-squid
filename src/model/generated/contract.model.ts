@@ -34,4 +34,25 @@ export class Contract {
 
   @Column_("int4", {nullable: true})
   decimals!: number | undefined | null
+
+  @Column_("int4", {nullable: false})
+  startBlock!: number
+
+  @Column_("text", {nullable: false})
+  metadataName!: string
+
+  @Column_("text", {nullable: false})
+  description!: string
+
+  @Column_("text", {nullable: false})
+  image!: string
+
+  @Column_("text", {nullable: false})
+  externalLink!: string
+
+  @Column_("text", {nullable: true})
+  artist!: string | undefined | null
+
+  @Column_("text", {nullable: true})
+  artistUrl!: string | undefined | null
 }

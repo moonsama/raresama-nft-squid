@@ -62,6 +62,15 @@ type Contract @entity {
   contractURIUpdated: BigInt
   address: String!
   decimals: Int
+  startBlock: Int!
+
+  #metadata
+  metadataName: String!
+  description: String!
+  image: String!
+  externalLink: String!
+  artist: String
+  artistUrl: String
 }
 
 type Transfer @entity {
