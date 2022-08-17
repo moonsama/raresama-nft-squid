@@ -20,8 +20,8 @@ export class Metadata {
   @Column_("text", {nullable: true})
   image!: string | undefined | null
 
-  @Column_("text", {nullable: false})
-  externalUrl!: string
+  @Column_("text", {nullable: true})
+  externalUrl!: string | undefined | null
 
   @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.map((val: any) => val.toJSON()), from: obj => obj == null ? undefined : marshal.fromList(obj, val => new Attribute(undefined, marshal.nonNull(val)))}, nullable: true})
   attributes!: (Attribute)[] | undefined | null

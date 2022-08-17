@@ -13,7 +13,7 @@ type Metadata @entity {
   description: String
   image: String
   # external_url field of metadata
-  externalUrl: String!
+  externalUrl: String
   attributes: [Attribute!]
   type: String
   composite: Boolean
