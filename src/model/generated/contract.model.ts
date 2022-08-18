@@ -11,6 +11,9 @@ export class Contract {
   @PrimaryColumn_()
   id!: string
 
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  factoryId!: bigint
+
   @Column_("text", {nullable: true})
   name!: string | undefined | null
 
@@ -29,26 +32,23 @@ export class Contract {
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
   contractURIUpdated!: bigint | undefined | null
 
-  @Column_("text", {nullable: false})
-  address!: string
-
   @Column_("int4", {nullable: true})
   decimals!: number | undefined | null
 
   @Column_("int4", {nullable: false})
   startBlock!: number
 
-  @Column_("text", {nullable: false})
-  metadataName!: string
+  @Column_("text", {nullable: true})
+  metadataName!: string | undefined | null
 
-  @Column_("text", {nullable: false})
-  description!: string
+  @Column_("text", {nullable: true})
+  description!: string | undefined | null
 
-  @Column_("text", {nullable: false})
-  image!: string
+  @Column_("text", {nullable: true})
+  image!: string | undefined | null
 
-  @Column_("text", {nullable: false})
-  externalLink!: string
+  @Column_("text", {nullable: true})
+  externalLink!: string | undefined | null
 
   @Column_("text", {nullable: true})
   artist!: string | undefined | null

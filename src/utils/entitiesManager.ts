@@ -1,6 +1,5 @@
 import { Store, EntityClass } from "@subsquid/typeorm-store";
 import { FindOptionsRelations, FindOptionsWhere } from "typeorm";
-import { TOKEN_RELATIONS } from "./config";
 import {
   Contract,
   Transfer,
@@ -90,43 +89,43 @@ class EntitiesCache<
 //   }
 // }
 
-class ContractsCache extends EntitiesCache<Contract> {
-  protected addCache(entity: Contract): void {
-    this.cache.set(entity.address, entity);
-  }
+// class ContractsCache extends EntitiesCache<Contract> {
+//   protected addCache(entity: Contract): void {
+//     this.cache.set(entity.address, entity);
+//   }
 
-  save(entity: Contract): void {
-    this.saveBuffer.add(entity);
-    this.addCache(entity);
-  }
+//   save(entity: Contract): void {
+//     this.saveBuffer.add(entity);
+//     this.addCache(entity);
+//   }
 
-  get(): never {
-    throw new Error("Use getByAddress for Contracts");
-  }
+//   get(): never {
+//     throw new Error("Use getByAddress for Contracts");
+//   }
 
-  async getByAddress(
-    db: Store,
-    address: string,
-    dieIfNull?: boolean
-  ): Promise<Contract | undefined> {
-    let item = this.cache.get(address);
-    if (!item) {
-      item = await db.get(Contract, {
-        where: {
-          address,
-        },
-      });
-    }
-    if (item) {
-      this.addCache(item);
-    } else if (dieIfNull) {
-      throw new Error("Not null assertion");
-    }
-    return item;
-  }
-}
+//   async getByAddress(
+//     db: Store,
+//     address: string,
+//     dieIfNull?: boolean
+//   ): Promise<Contract | undefined> {
+//     let item = this.cache.get(address);
+//     if (!item) {
+//       item = await db.get(Contract, {
+//         where: {
+//           address,
+//         },
+//       });
+//     }
+//     if (item) {
+//       this.addCache(item);
+//     } else if (dieIfNull) {
+//       throw new Error("Not null assertion");
+//     }
+//     return item;
+//   }
+// }
 
-export const contracts = new ContractsCache();
+export const contracts = new EntitiesCache<Contract>();
 export const transfers = new EntitiesBuffer<Transfer>();
 export const ownerTransfers = new EntitiesBuffer<OwnerTransfer>();
 export const owners = new EntitiesCache<Owner>();

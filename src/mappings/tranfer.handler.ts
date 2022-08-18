@@ -4,7 +4,6 @@ import {
   BatchContext,
 } from "@subsquid/substrate-processor";
 import { Store } from "@subsquid/typeorm-store";
-import { getAddress } from "ethers/lib/utils";
 import assert from "assert";
 import { Contract, Direction, Metadata, OwnerTransfer, Token, Transfer } from "../model";
 import * as raresamaCollection from "../types/generated/raresama-collection";
@@ -25,11 +24,13 @@ export async function handleTransfer(
   event: EvmLogEvent
 ): Promise<void> {
   const evmLog = event.args;
-  const address = getAddress(evmLog.address);
+  const address = evmLog.address.toLowerCase();
   const contractAPI = new raresamaCollection.Contract(ctx, block, address);
-  const contractEntity = (await contracts.getByAddress(
+  const contractEntity = (await contracts.get(
     ctx.store,
+    Contract,
     address,
+    undefined,
     true
   )) as Contract;
   const data =
@@ -37,7 +38,7 @@ export async function handleTransfer(
       evmLog
     );
   const owner =
-    data.to === NULL_ADDRESS ? null : await getOrCreateOwner(ctx, data.to);
+    data.to === NULL_ADDRESS ? null : await getOrCreateOwner(ctx, data.to.toLowerCase());
   const nativeId = data.tokenId.toBigInt();
   const id = getTokenId(address, nativeId);
 
@@ -75,13 +76,14 @@ export async function handleTransfer(
     if (!metadata) {
       metadata = await parseMetadata(ctx,token.tokenUri)
       if (metadata) metadatas.save(metadata)
+      token.metadataUpdated = BigInt(block.timestamp)
     }
     token.metadata = metadata
   }
   tokens.save(token);
   
   const oldOwner =
-    data.from === NULL_ADDRESS ? null : await getOrCreateOwner(ctx, data.from);
+    data.from === NULL_ADDRESS ? null : await getOrCreateOwner(ctx, data.from.toLowerCase());
 
   const transfer = new Transfer({
     id: event.id,

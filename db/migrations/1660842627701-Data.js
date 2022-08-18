@@ -1,8 +1,8 @@
-module.exports = class Data1660742686527 {
-  name = 'Data1660742686527'
+module.exports = class Data1660842627701 {
+  name = 'Data1660842627701'
 
   async up(db) {
-    await db.query(`CREATE TABLE "metadata" ("id" character varying NOT NULL, "name" text, "description" text, "image" text, "external_url" text NOT NULL, "attributes" jsonb, "type" text, "composite" boolean, "layers" text array, "artist" text, "artist_url" text, CONSTRAINT "PK_56b22355e89941b9792c04ab176" PRIMARY KEY ("id"))`)
+    await db.query(`CREATE TABLE "metadata" ("id" character varying NOT NULL, "name" text, "description" text, "image" text, "external_url" text, "attributes" jsonb, "type" text, "composite" boolean, "layers" text array, "artist" text, "artist_url" text, CONSTRAINT "PK_56b22355e89941b9792c04ab176" PRIMARY KEY ("id"))`)
     await db.query(`CREATE TABLE "transfer" ("id" character varying NOT NULL, "timestamp" numeric NOT NULL, "block" integer NOT NULL, "transaction_hash" text NOT NULL, "token_id" character varying, "from_id" character varying, "to_id" character varying, CONSTRAINT "PK_fd9ddbdd49a17afcbe014401295" PRIMARY KEY ("id"))`)
     await db.query(`CREATE INDEX "IDX_b27b1150b8a7af68424540613c" ON "transfer" ("token_id") `)
     await db.query(`CREATE INDEX "IDX_76bdfed1a7eb27c6d8ecbb7349" ON "transfer" ("from_id") `)
@@ -11,7 +11,7 @@ module.exports = class Data1660742686527 {
     await db.query(`CREATE INDEX "IDX_9e14a1fe72ddc7447a262c6a05" ON "owner_transfer" ("owner_id") `)
     await db.query(`CREATE INDEX "IDX_cc86cf88fef8b29f6d2c9ea2d8" ON "owner_transfer" ("transfer_id") `)
     await db.query(`CREATE TABLE "owner" ("id" character varying NOT NULL, "balance" numeric NOT NULL, CONSTRAINT "PK_8e86b6b9f94aece7d12d465dc0c" PRIMARY KEY ("id"))`)
-    await db.query(`CREATE TABLE "contract" ("id" character varying NOT NULL, "name" text, "symbol" text, "total_supply" numeric NOT NULL, "contract_uri" text, "contract_uri_updated" numeric, "address" text NOT NULL, "decimals" integer, "start_block" integer NOT NULL, "metadata_name" text NOT NULL, "description" text NOT NULL, "image" text NOT NULL, "external_link" text NOT NULL, "artist" text, "artist_url" text, CONSTRAINT "PK_17c3a89f58a2997276084e706e8" PRIMARY KEY ("id"))`)
+    await db.query(`CREATE TABLE "contract" ("id" character varying NOT NULL, "factory_id" numeric NOT NULL, "name" text, "symbol" text, "total_supply" numeric NOT NULL, "contract_uri" text, "contract_uri_updated" numeric, "decimals" integer, "start_block" integer NOT NULL, "metadata_name" text, "description" text, "image" text, "external_link" text, "artist" text, "artist_url" text, CONSTRAINT "PK_17c3a89f58a2997276084e706e8" PRIMARY KEY ("id"))`)
     await db.query(`CREATE TABLE "token" ("id" character varying NOT NULL, "numeric_id" numeric NOT NULL, "token_uri" text, "composite_token_uri" text, "metadata_updated" numeric, "owner_id" character varying, "contract_id" character varying, "metadata_id" character varying, CONSTRAINT "PK_82fae97f905930df5d62a702fc9" PRIMARY KEY ("id"))`)
     await db.query(`CREATE INDEX "IDX_77fa31a311c711698a0b944382" ON "token" ("owner_id") `)
     await db.query(`CREATE INDEX "IDX_5c85dbbd108d915a13f71de39a" ON "token" ("contract_id") `)

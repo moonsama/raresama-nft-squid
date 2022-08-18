@@ -15,7 +15,8 @@ import { isKnownContract } from "./helpers"
 const database = new TypeormDatabase()
 const processor = new SubstrateBatchProcessor()
     .setBatchSize(100)
-    .setBlockRange({ from: 2385792 }) 
+    // .setBlockRange({ from: 2385792 }) 
+    .setBlockRange({ from: 2395293 }) 
     .setDataSource({
         chain: config.CHAIN_NODE,
         archive: 'https://moonriver.archive.subsquid.io/graphql',

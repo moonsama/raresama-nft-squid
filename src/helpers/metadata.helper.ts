@@ -1,6 +1,6 @@
 import {Store} from '@subsquid/typeorm-store'
 import Axios from 'axios'
-import {assertNotNull, BatchContext} from '@subsquid/substrate-processor'
+import {BatchContext} from '@subsquid/substrate-processor'
 import {Attribute, Metadata} from '../model'
 import {IRawMetadata} from '../types/custom/metadata'
 
@@ -93,10 +93,10 @@ export const fetchContractMetadata = async (
         ctx.log.info(`[IPFS] ${status} ${properUrl}`)
         if (status < 400) {
             return {
-                name: assertNotNull(data.name),
-                description: assertNotNull(data.description),
-                image: assertNotNull(data.image),
-                externalLink: assertNotNull(data.external_link),
+                name: data.name,
+                description: data.description,
+                image: data.image,
+                externalLink: data.external_link,
                 artist: data.artist,
                 artistUrl: data.artist_url,
             }

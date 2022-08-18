@@ -51,6 +51,7 @@ type Owner @entity {
 type Contract @entity {
   # 1
   id: ID!
+  factoryId: BigInt!
   name: String
   symbol: String
   #updated on each mint/burn
@@ -60,15 +61,14 @@ type Contract @entity {
   contractURI: String
   # timestamp when the contract URI was updated last
   contractURIUpdated: BigInt
-  address: String!
   decimals: Int
   startBlock: Int!
 
   #metadata
-  metadataName: String!
-  description: String!
-  image: String!
-  externalLink: String!
+  metadataName: String
+  description: String
+  image: String
+  externalLink: String
   artist: String
   artistUrl: String
 }
