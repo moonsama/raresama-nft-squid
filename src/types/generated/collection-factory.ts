@@ -7,6 +7,7 @@ export interface CollectionAdded0Event {
   id: ethers.BigNumber;
   template: string;
   collectionAddress: string;
+  blockNumber: ethers.BigNumber;
 }
 
 export interface RoleAdminChanged0Event {
@@ -37,11 +38,11 @@ export interface EvmEvent {
 }
 
 export const events = {
-  "CollectionAdded(uint256,bytes32,address)":  {
-    topic: abi.getEventTopic("CollectionAdded(uint256,bytes32,address)"),
+  "CollectionAdded(uint256,bytes32,address,uint256)":  {
+    topic: abi.getEventTopic("CollectionAdded(uint256,bytes32,address,uint256)"),
     decode(data: EvmEvent): CollectionAdded0Event {
       const result = abi.decodeEventLog(
-        abi.getEvent("CollectionAdded(uint256,bytes32,address)"),
+        abi.getEvent("CollectionAdded(uint256,bytes32,address,uint256)"),
         data.data || "",
         data.topics
       );
@@ -49,6 +50,7 @@ export const events = {
         id: result[0],
         template: result[1],
         collectionAddress: result[2],
+        blockNumber: result[3],
       }
     }
   }
@@ -287,6 +289,12 @@ function getJsonAbi(): any {
           "internalType": "address",
           "name": "collectionAddress",
           "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "blockNumber",
+          "type": "uint256"
         }
       ],
       "name": "CollectionAdded",
@@ -469,6 +477,11 @@ function getJsonAbi(): any {
           "internalType": "address",
           "name": "_collection",
           "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_indexFromBlockNumber",
+          "type": "uint256"
         }
       ],
       "name": "addManual",

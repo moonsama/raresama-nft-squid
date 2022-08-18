@@ -40,6 +40,12 @@
 				"internalType": "address",
 				"name": "collectionAddress",
 				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "blockNumber",
+				"type": "uint256"
 			}
 		],
 		"name": "CollectionAdded",
@@ -222,6 +228,11 @@
 				"internalType": "address",
 				"name": "_collection",
 				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_indexFromBlockNumber",
+				"type": "uint256"
 			}
 		],
 		"name": "addManual",

@@ -13,7 +13,7 @@ type Metadata @entity {
   description: String
   image: String
   # external_url field of metadata
-  externalUrl: String!
+  externalUrl: String
   attributes: [Attribute!]
   type: String
   composite: Boolean
@@ -62,6 +62,15 @@ type Contract @entity {
   contractURIUpdated: BigInt
   address: String!
   decimals: Int
+  startBlock: Int!
+
+  #metadata
+  metadataName: String!
+  description: String!
+  image: String!
+  externalLink: String!
+  artist: String
+  artistUrl: String
 }
 
 type Transfer @entity {
