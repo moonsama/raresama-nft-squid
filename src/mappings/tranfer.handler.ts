@@ -14,9 +14,10 @@ import {
   transfers,
   metadatas
 } from "../utils/entitiesManager";
-import { getTokenId, getOrCreateOwner } from "../helpers";
+import { getTokenId, getOrCreateOwner, findCollectionStat } from "../helpers";
 import { NULL_ADDRESS, TOKEN_RELATIONS } from "../utils/config";
 import { parseMetadata } from "../helpers/metadata.helper";
+
 
 export async function handleTransfer(
   ctx: BatchContext<Store, unknown>,
@@ -34,9 +35,11 @@ export async function handleTransfer(
     true
   )) as Contract;
   const data =
-    raresamaCollection.events["Transfer(address,address,uint256)"].decode(
-      evmLog
+  raresamaCollection.events["Transfer(address,address,uint256)"].decode(
+    evmLog
     );
+  const oldOwner =
+    data.from === NULL_ADDRESS ? null : await getOrCreateOwner(ctx, data.from.toLowerCase());
   const owner =
     data.to === NULL_ADDRESS ? null : await getOrCreateOwner(ctx, data.to.toLowerCase());
   const nativeId = data.tokenId.toBigInt();
@@ -44,6 +47,7 @@ export async function handleTransfer(
 
   let token = await tokens.get(ctx.store, Token, id, TOKEN_RELATIONS);
   if (!token) {
+    // check if token is minting
     assert(
       data.from === NULL_ADDRESS,
       `Contract's ${address} Token ${nativeId} transferred before mint`
@@ -64,8 +68,26 @@ export async function handleTransfer(
     });
     contractEntity.totalSupply += 1n;
   } else {
-    token.owner = owner;
-    if (!owner) contractEntity.totalSupply -= 1n;
+    // update old owner stats (only if not minting)
+    if (oldOwner) {
+      const collsStats = oldOwner.totalCollectionNfts
+      const collStat = findCollectionStat(collsStats, address, false)
+      collStat.amount -= 1
+      if (!collStat.amount) {
+        // remove from the array
+        contractEntity.uniqueOwnersCount -= 1
+        collsStats.splice(collsStats.indexOf(collStat),1)
+      }
+    }
+    token.owner = owner
+    if (!owner) contractEntity.totalSupply -= 1n
+  }
+  // update current owner stats if not burning
+  if (owner) {
+    const collsStats = owner.totalCollectionNfts
+    const collStat = findCollectionStat(collsStats, address, true)
+    collStat.amount += 1
+    if (collStat.amount === 1) contractEntity.uniqueOwnersCount += 1
   }
   contracts.save(contractEntity);
   // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
@@ -82,8 +104,6 @@ export async function handleTransfer(
   }
   tokens.save(token);
   
-  const oldOwner =
-    data.from === NULL_ADDRESS ? null : await getOrCreateOwner(ctx, data.from.toLowerCase());
 
   const transfer = new Transfer({
     id: event.id,

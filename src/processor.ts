@@ -5,7 +5,7 @@ import {
   SubstrateBatchProcessor,
   SubstrateBlock,
 } from "@subsquid/substrate-processor"
-import {handleNewContract, handleTransfer} from "./mappings"
+import { handleNewContract, handleTransfer } from "./mappings"
 import { saveAll } from "./utils/entitiesManager"
 import * as collectionFactory from "./types/generated/collection-factory"
 import * as raresamaCollection from "./types/generated/raresama-collection"

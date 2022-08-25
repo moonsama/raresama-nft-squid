@@ -1,6 +1,8 @@
+// eslint-disable-next-line eslint-comments/disable-enable-pair
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { BatchContext } from "@subsquid/substrate-processor"
 import { Store } from "@subsquid/typeorm-store"
-import { Owner } from "../model"
+import { Owner, TotalOwnedNft } from "../model"
 import { owners } from "../utils/entitiesManager"
 
 export async function getOrCreateOwner(ctx: BatchContext<Store, unknown> , id: string): Promise<Owner> {
@@ -8,10 +10,28 @@ export async function getOrCreateOwner(ctx: BatchContext<Store, unknown> , id: s
     if (!owner) {
         owner = new Owner({
             id,
-            balance: 0n
+            balance: 0n,
+            totalCollectionNfts: []
         })
     }
     owners.save(owner)
     return owner
 }
 
+export function findCollectionStat(ownStats: TotalOwnedNft[], conctractAddress: string, createIfNull: boolean ): TotalOwnedNft {
+    const neededStat = ownStats.find((stat) => 
+        stat.conctractAddress === conctractAddress
+    )
+    if (!neededStat) {
+        if (createIfNull) {
+            const newStat = new TotalOwnedNft({
+                    conctractAddress,
+                    amount: 0
+                })
+            ownStats.push(newStat)
+            return newStat
+        }
+        throw new Error(`No items for contract ${conctractAddress}`);
+    }
+    else return neededStat
+}

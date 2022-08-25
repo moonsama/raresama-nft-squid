@@ -37,6 +37,7 @@ export async function handleNewContract(
         startBlock: data.blockNumber.toNumber(),
         contractURIUpdated: BigInt(block.timestamp),
         metadataName,
+        uniqueOwnersCount: 0,
         ...metadata
     })
 

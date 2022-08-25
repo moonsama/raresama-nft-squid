@@ -6,6 +6,7 @@ type Attribute @jsonField {
   value: String!
 }
 
+
 # these values come from the fetched metadata object from the token URI
 type Metadata @entity {
   id: ID!
@@ -41,12 +42,16 @@ type Token @entity {
 type Owner @entity {
   id: ID!
   ownedTokens: [Token!]! @derivedFrom(field: "owner")
+  totalCollectionNfts: [TotalOwnedNft!]!
   # amount of tokens
   balance: BigInt!
   transfers: [OwnerTransfer!] @derivedFrom(field: "owner")
-
 }
 
+type TotalOwnedNft @jsonField {
+  conctractAddress: String!
+  amount: Int!
+}
 # Generic contract stats
 type Contract @entity {
   # 1
@@ -71,6 +76,9 @@ type Contract @entity {
   externalLink: String
   artist: String
   artistUrl: String
+
+  #counters
+  uniqueOwnersCount: Int!
 }
 
 type Transfer @entity {

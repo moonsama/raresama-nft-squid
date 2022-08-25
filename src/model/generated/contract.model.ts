@@ -55,4 +55,7 @@ export class Contract {
 
   @Column_("text", {nullable: true})
   artistUrl!: string | undefined | null
+
+  @Column_("int4", {nullable: false})
+  uniqueOwnersCount!: number
 }
