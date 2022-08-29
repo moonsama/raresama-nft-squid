@@ -1,4 +1,4 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, OneToMany as OneToMany_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, OneToMany as OneToMany_, Index as Index_} from "typeorm"
 import * as marshal from "./marshal"
 import {Token} from "./token.model"
 import {TotalOwnedNft} from "./_totalOwnedNft"
@@ -19,6 +19,7 @@ export class Owner {
   @Column_("jsonb", {transformer: {to: obj => obj.map((val: any) => val.toJSON()), from: obj => marshal.fromList(obj, val => new TotalOwnedNft(undefined, marshal.nonNull(val)))}, nullable: false})
   totalCollectionNfts!: (TotalOwnedNft)[]
 
+  @Index_()
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
   balance!: bigint
 

@@ -24,12 +24,15 @@ export class Transfer {
   @ManyToOne_(() => Owner, {nullable: true})
   to!: Owner | undefined | null
 
+  @Index_()
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
   timestamp!: bigint
 
+  @Index_()
   @Column_("int4", {nullable: false})
   block!: number
 
+  @Index_()
   @Column_("text", {nullable: false})
   transactionHash!: string
 }

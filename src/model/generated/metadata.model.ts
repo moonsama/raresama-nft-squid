@@ -1,4 +1,4 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_} from "typeorm"
 import * as marshal from "./marshal"
 import {Attribute} from "./_attribute"
 
@@ -11,6 +11,7 @@ export class Metadata {
   @PrimaryColumn_()
   id!: string
 
+  @Index_()
   @Column_("text", {nullable: true})
   name!: string | undefined | null
 
@@ -26,6 +27,7 @@ export class Metadata {
   @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.map((val: any) => val.toJSON()), from: obj => obj == null ? undefined : marshal.fromList(obj, val => new Attribute(undefined, marshal.nonNull(val)))}, nullable: true})
   attributes!: (Attribute)[] | undefined | null
 
+  @Index_()
   @Column_("text", {nullable: true})
   type!: string | undefined | null
 
@@ -35,6 +37,7 @@ export class Metadata {
   @Column_("text", {array: true, nullable: true})
   layers!: (string)[] | undefined | null
 
+  @Index_()
   @Column_("text", {nullable: true})
   artist!: string | undefined | null
 

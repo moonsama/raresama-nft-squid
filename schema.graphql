@@ -10,30 +10,31 @@ type Attribute @jsonField {
 # these values come from the fetched metadata object from the token URI
 type Metadata @entity {
   id: ID!
-  name: String
+  name: String @index
   description: String
   image: String
   # external_url field of metadata
   externalUrl: String
   attributes: [Attribute!]
-  type: String
+  type: String @index
   composite: Boolean
   layers: [String!]
-  artist: String
+  artist: String @index
   # artist_url field of metadata
   artistUrl: String
 }
 
 type Token @entity {
   id: ID!
-  numericId: BigInt!
+  numericId: BigInt! @index
   owner: Owner
   # tokenURI of contract
   tokenUri: String
   # compositeURI of contract
   compositeTokenUri: String
   # timestamp when the token URIs were updated last
-  metadataUpdated: BigInt
+  updatedAt: BigInt! @index
+  createdAt: BigInt! @index
   transfers: [Transfer!]! @derivedFrom(field: "token")
   contract: Contract!
   metadata: Metadata
@@ -44,7 +45,7 @@ type Owner @entity {
   ownedTokens: [Token!]! @derivedFrom(field: "owner")
   totalCollectionNfts: [TotalOwnedNft!]!
   # amount of tokens
-  balance: BigInt!
+  balance: BigInt! @index
   transfers: [OwnerTransfer!] @derivedFrom(field: "owner")
 }
 
@@ -56,29 +57,29 @@ type TotalOwnedNft @jsonField {
 type Contract @entity {
   # 1
   id: ID!
-  factoryId: BigInt!
-  name: String
-  symbol: String
+  factoryId: BigInt! @index
+  name: String @index
+  symbol: String @index
   #updated on each mint/burn
-  totalSupply: BigInt!
+  totalSupply: BigInt! 
   mintedTokens: [Token!]! @derivedFrom(field: "contract")
   # contract URI updated once e.g. a day
   contractURI: String
   # timestamp when the contract URI was updated last
-  contractURIUpdated: BigInt
+  contractURIUpdated: BigInt @index
   decimals: Int
-  startBlock: Int!
+  startBlock: Int! @index
 
   #metadata
-  metadataName: String
+  metadataName: String @index
   description: String
   image: String
   externalLink: String
-  artist: String
+  artist: String @index
   artistUrl: String
 
   #counters
-  uniqueOwnersCount: Int!
+  uniqueOwnersCount: Int! @index
 }
 
 type Transfer @entity {
@@ -86,9 +87,9 @@ type Transfer @entity {
   token: Token!
   from: Owner
   to: Owner
-  timestamp: BigInt!
-  block: Int!
-  transactionHash: String!
+  timestamp: BigInt! @index
+  block: Int! @index
+  transactionHash: String! @index
 }
 
 enum Direction {
