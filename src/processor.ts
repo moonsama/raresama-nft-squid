@@ -3,7 +3,13 @@ import {
   EvmLogHandlerContext,
   SubstrateBatchProcessor,
 } from '@subsquid/substrate-processor'
-import { handleContractUri, handleNewContract, handleTransfer, handleUri, handleUriAll } from './mappings'
+import {
+  handleContractUri,
+  handleNewContract,
+  handleTransfer,
+  handleUri,
+  handleUriAll,
+} from './mappings'
 import { saveAll } from './utils/entitiesManager'
 import * as collectionFactory from './types/generated/collection-factory'
 import * as raresamaCollection from './types/generated/raresama-collection'
@@ -13,13 +19,12 @@ import { isKnownContract } from './helpers'
 const database = new TypeormDatabase()
 const processor = new SubstrateBatchProcessor()
   .setBatchSize(100)
-  .setBlockRange({ from: 2385792 })
-  // .setBlockRange({ from: 2395293 })
+  .setBlockRange({ from: 1751365 })
   .setDataSource({
     chain: config.CHAIN_NODE,
-    archive: 'https://moonriver.archive.subsquid.io/graphql',
+    archive: 'https://moonbeam.archive.subsquid.io/graphql',
   })
-  .setTypesBundle('moonriver')
+  .setTypesBundle('moonbeam')
   .addEvmLog(config.FACTORY_ADDRESS, {
     filter: [
       collectionFactory.events[
