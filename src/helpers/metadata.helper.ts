@@ -51,29 +51,31 @@ export async function parseMetadata(
 ): Promise<Metadata | undefined> {
   const rawMeta = await fetchMetadata(ctx, url)
   if (!rawMeta) return undefined
-  const attributes: Attribute[] = rawMeta.attributes.map(
-    (attr) =>
-      new Attribute({
-        displayType: attr.display_type
-          ? String(attr.display_type)
-          : attr.display_type,
-        traitType: String(attr.trait_type),
-        value: String(attr.value),
-      })
-  )
   const metadata = new Metadata({
     id: url,
     name: rawMeta.name,
     description: rawMeta.description,
     image: rawMeta.image,
     externalUrl: rawMeta.external_url,
-    attributes,
     layers: rawMeta.layers,
     artist: rawMeta.artist,
     artistUrl: rawMeta.artist_url,
     composite: Boolean(rawMeta.composite),
     type: rawMeta.type,
   })
+  if (rawMeta.attributes) {
+    const attributes: Attribute[] = rawMeta.attributes.map(
+      (attr) =>
+        new Attribute({
+          displayType: attr.display_type
+            ? String(attr.display_type)
+            : attr.display_type,
+          traitType: String(attr.trait_type),
+          value: String(attr.value),
+        })
+    )
+    metadata.attributes = attributes
+  }
   // ctx.log.info(attributes)
   // ctx.log.info(metadata)
   return metadata
