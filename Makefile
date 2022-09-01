@@ -7,7 +7,7 @@ build:
 
 
 serve:
-	@npx squid-graphql-server --sql-statement-timeout 5000
+	@npx squid-graphql-server
 
 
 migrate:
