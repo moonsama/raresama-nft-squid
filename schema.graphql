@@ -1,11 +1,10 @@
-type Attribute @jsonField {
+type Attribute {
   # display_type field of metadata attributes
   displayType: String
   # trait_type field of metadata attributes
   traitType: String!
   value: String!
 }
-
 
 # these values come from the fetched metadata object from the token URI
 type Metadata @entity {
@@ -49,7 +48,7 @@ type Owner @entity {
   transfers: [OwnerTransfer!] @derivedFrom(field: "owner")
 }
 
-type TotalOwnedNft @jsonField {
+type TotalOwnedNft {
   conctractAddress: String!
   amount: Int!
 }
@@ -61,7 +60,7 @@ type Contract @entity {
   name: String @index
   symbol: String @index
   #updated on each mint/burn
-  totalSupply: BigInt! 
+  totalSupply: BigInt!
   mintedTokens: [Token!]! @derivedFrom(field: "contract")
   # contract URI updated once e.g. a day
   contractURI: String
