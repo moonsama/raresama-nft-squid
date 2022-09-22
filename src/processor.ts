@@ -3,7 +3,13 @@ import {
   EvmLogHandlerContext,
   SubstrateBatchProcessor,
 } from '@subsquid/substrate-processor'
-import { handleContractUri, handleNewContract, handleTransfer, handleUri, handleUriAll } from './mappings'
+import {
+  handleContractUri,
+  handleNewContract,
+  handleTransfer,
+  handleUri,
+  handleUriAll,
+} from './mappings'
 import { saveAll } from './utils/entitiesManager'
 import * as collectionFactory from './types/generated/collection-factory'
 import * as raresamaCollection from './types/generated/raresama-collection'
@@ -13,8 +19,7 @@ import { isKnownContract } from './helpers'
 const database = new TypeormDatabase()
 const processor = new SubstrateBatchProcessor()
   .setBatchSize(100)
-  .setBlockRange({ from: 2385792 })
-  // .setBlockRange({ from: 2395293 })
+  .setBlockRange({ from: 2620300 })
   .setDataSource({
     chain: config.CHAIN_NODE,
     archive: 'https://moonriver.archive.subsquid.io/graphql',
@@ -56,10 +61,11 @@ processor.run(database, async (ctx) => {
 })
 
 async function handleEvmLog(ctx: EvmLogHandlerContext<Store>) {
-  const contractAddress = ctx.event.args.address
+  const args = ((ctx.event.args.log || ctx.event.args));
+  const contractAddress = args.address
   if (
     contractAddress === config.FACTORY_ADDRESS &&
-    ctx.event.args.topics[0] ===
+    args.topics[0] ===
       collectionFactory.events[
         'CollectionAdded(uint256,bytes32,address,uint256)'
       ].topic
@@ -68,7 +74,7 @@ async function handleEvmLog(ctx: EvmLogHandlerContext<Store>) {
   } else if (
     await isKnownContract(ctx.store, contractAddress, ctx.block.height)
   )
-    switch (ctx.event.args.topics[0]) {
+    switch (args.topics[0]) {
       case raresamaCollection.events['Transfer(address,address,uint256)'].topic:
         await handleTransfer(ctx)
         break

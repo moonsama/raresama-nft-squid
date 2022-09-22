@@ -10,7 +10,7 @@ export async function handleNewContract(
   ctx: EvmLogHandlerContext<Store>
 ): Promise<void> {
   const { event, block } = ctx
-  const evmLog = event.args
+  const evmLog = ((event.args.log || event.args));
   const data =
     collectionFactory.events[
       'CollectionAdded(uint256,bytes32,address,uint256)'

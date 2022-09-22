@@ -10,7 +10,7 @@ export async function handleContractUri(
   ctx: EvmLogHandlerContext<Store>
 ): Promise<void> {
   const { event, block, store } = ctx
-  const evmLog = event.args
+  const evmLog = ((event.args.log || event.args));
   const address = (<string>evmLog.address).toLowerCase()
   const contractAPI = new raresamaCollection.Contract(ctx, address)
 
