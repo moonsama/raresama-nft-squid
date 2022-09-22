@@ -21,7 +21,7 @@ export async function handleTransfer(
   ctx: EvmLogHandlerContext<Store>
 ): Promise<void> {
   const { event, block } = ctx
-  const evmLog = event.args
+  const evmLog = ((event.args.log || event.args));
   const address = evmLog.address.toLowerCase() as string
   const contractAPI = new raresamaCollection.Contract(ctx, address)
   const contractEntity = (await contracts.get(
