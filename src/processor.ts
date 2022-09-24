@@ -19,7 +19,7 @@ import { isKnownContract } from './helpers'
 const database = new TypeormDatabase()
 const processor = new SubstrateBatchProcessor()
   .setBatchSize(100)
-  .setBlockRange({ from: 1910000 })
+  .setBlockRange({ from: 1777433 })
   .setDataSource({
     chain: config.CHAIN_NODE,
     archive: 'https://moonbeam.archive.subsquid.io/graphql',
