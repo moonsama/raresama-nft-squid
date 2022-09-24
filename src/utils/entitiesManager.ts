@@ -17,18 +17,18 @@ export interface EntityWithId {
 }
 
 export class EntitiesBuffer<Entity extends EntityWithId> {
-  protected saveBuffer: Set<Entity> = new Set()
+  protected saveBuffer: Map<string, Entity> = new Map()
 
   save(entity: Entity): void {
-    this.saveBuffer.add(entity)
+    this.saveBuffer.set(entity.id, entity)
   }
 
   getBuffer(): Array<Entity> {
-    return [...this.saveBuffer]
+    return [...this.saveBuffer.values()]
   }
 
   async saveAll(db: Store): Promise<void> {
-    await db.save([...this.saveBuffer])
+    await db.save([...this.saveBuffer.values()])
     this.saveBuffer.clear()
   }
 }
@@ -61,7 +61,7 @@ export class EntitiesCache<
   }
 
   save(entity: Entity): void {
-    this.saveBuffer.add(entity)
+    this.saveBuffer.set(entity.id,entity)
     this.addCache(entity)
   }
 
@@ -88,7 +88,7 @@ export class EntitiesCache<
   }
 
   async saveAll(db: Store, clear?: boolean): Promise<void> {
-    await db.save([...this.saveBuffer])
+    await db.save([...this.saveBuffer.values()])
     this.saveBuffer.clear()
     if (clear) {
       this.cache.clear()
@@ -113,7 +113,7 @@ class TokensCache extends EntitiesCache<Token> {
           id: contractAddress,
         },
       },
-      relations: TOKEN_RELATIONS
+      relations: TOKEN_RELATIONS,
     })
 
     // Replace db tokens that exists in cache

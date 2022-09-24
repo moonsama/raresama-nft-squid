@@ -216,7 +216,9 @@ async function fillTokenMetadata<T extends Token>(
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     `Tried to update metadata of ${entity} with null tokenURI`
   )
-  const meta = await parseMetadata(ctx, entity.tokenUri)
+  const meta =
+    (await metadatas.get(ctx.store, Metadata, entity.tokenUri)) ??
+    (await parseMetadata(ctx, entity.tokenUri))
   if (meta) {
     metadatas.save(meta)
     entity.metadata = meta
