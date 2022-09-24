@@ -38,15 +38,7 @@ export async function handleNewContract(
     contractURIUpdated: BigInt(block.timestamp),
     uniqueOwnersCount: 0,
   })
-  const rawMetadata = await fetchContractMetadata(ctx, contractURI)
-  if (rawMetadata) {
-    contract.metadataName = rawMetadata.name
-    contract.artist = rawMetadata.artist
-    contract.artistUrl = rawMetadata.artistUrl
-    contract.externalLink = rawMetadata.externalLink
-    contract.description = rawMetadata.description
-    contract.image = rawMetadata.image
-  }
+  contracts.addToUriUpdatedBuffer(contract)
 
   ctx.log.info(`Collection added - ${contract.id}`)
   contracts.save(contract)

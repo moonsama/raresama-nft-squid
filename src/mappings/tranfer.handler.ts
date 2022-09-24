@@ -54,23 +54,16 @@ export async function handleTransfer(
       `Contract's ${address} Token ${nativeId} transferred before mint`
     )
 
-    const [tokenUri, compositeTokenUri] = await Promise.all([
-      contractAPI.tokenURI(data.tokenId),
-      contractAPI.compositeURI(data.tokenId),
-    ])
-
     token = new Token({
       id,
       numericId: nativeId,
       owner,
-      tokenUri,
-      compositeTokenUri,
       contract: contractEntity,
       updatedAt: BigInt(block.timestamp),
       createdAt: BigInt(block.timestamp),
     })
     // Parse meta if possible
-    await updateTokenMetadata(ctx, token, contractAPI)
+    tokens.addToUriUpdatedBuffer(token)
 
     contractEntity.totalSupply += 1n
   } else {

@@ -15,6 +15,7 @@ import * as collectionFactory from './types/generated/collection-factory'
 import * as raresamaCollection from './types/generated/raresama-collection'
 import * as config from './utils/config'
 import { isKnownContract } from './helpers'
+import { updateAllMetadata } from './helpers/metadata.helper'
 
 const database = new TypeormDatabase()
 const processor = new SubstrateBatchProcessor()
@@ -57,11 +58,15 @@ processor.run(database, async (ctx) => {
       }
     }
   }
+  await updateAllMetadata({
+    ...ctx,
+    block: ctx.blocks[ctx.blocks.length - 1].header,
+  })
   await saveAll(ctx.store)
 })
 
 async function handleEvmLog(ctx: EvmLogHandlerContext<Store>) {
-  const args = ((ctx.event.args.log || ctx.event.args));
+  const args = ctx.event.args.log || ctx.event.args
   const contractAddress = args.address
   if (
     contractAddress === config.FACTORY_ADDRESS &&
