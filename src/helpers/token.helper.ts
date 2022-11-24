@@ -5,13 +5,15 @@ import { Metadata, Token } from '../model'
 import { metadatas } from '../utils/entitiesManager'
 import * as raresamaCollection from '../types/generated/raresama-collection'
 import { parseMetadata } from './metadata.helper'
+import { LogContext } from '../processor'
 
 export function getTokenId(contract: string, nativeId: BigInt): string {
   return `${contract}-${String(nativeId).padStart(9, '0')}`
 }
 
 export async function updateTokenMetadata(
-  ctx: CommonHandlerContext<Store>,
+  // ctx: CommonHandlerContext<Store>,
+  ctx: LogContext,
   token: Token,
   contractAPI: raresamaCollection.Contract
 ): Promise<void> {

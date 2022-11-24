@@ -1,16 +1,28 @@
+import { EvmLog, LogHandlerContext } from '@subsquid/evm-processor'
 import { EvmLogHandlerContext } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
 import { fetchContractMetadata } from '../helpers/metadata.helper'
 import { Contract } from '../model'
+import { LogContext } from '../processor'
 import * as collectionFactory from '../types/generated/collection-factory'
 import * as raresamaCollection from '../types/generated/raresama-collection'
 import { contracts } from '../utils/entitiesManager'
 
 export async function handleNewContract(
-  ctx: EvmLogHandlerContext<Store>
+  // ctx: LogHandlerContext<Store>
+  ctx:LogContext
 ): Promise<void> {
-  const { event, block } = ctx
-  const evmLog = ((event.args.log || event.args));
+  // const { event, block } = ctx
+  const { evmLog, store, transaction, block } = ctx;
+  const topic = evmLog.topics[0];
+  // const evmLog = ((event.args.log || event.args));
+
+  const args = evmLog;
+  // console.log("evmLog", evmLog);
+  // console.log("transaction", transaction);
+  // console.log("block", block);
+  const event = evmLog as EvmLog;
+  const contractAddress = evmLog.address.toLowerCase();
   const data =
     collectionFactory.events[
       'CollectionAdded(uint256,bytes32,address,uint256)'
@@ -38,15 +50,7 @@ export async function handleNewContract(
     contractURIUpdated: BigInt(block.timestamp),
     uniqueOwnersCount: 0,
   })
-  const rawMetadata = await fetchContractMetadata(ctx, contractURI)
-  if (rawMetadata) {
-    contract.metadataName = rawMetadata.name
-    contract.artist = rawMetadata.artist
-    contract.artistUrl = rawMetadata.artistUrl
-    contract.externalLink = rawMetadata.externalLink
-    contract.description = rawMetadata.description
-    contract.image = rawMetadata.image
-  }
+  contracts.addToUriUpdatedBuffer(contract)
 
   ctx.log.info(`Collection added - ${contract.id}`)
   contracts.save(contract)

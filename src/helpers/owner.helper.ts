@@ -6,10 +6,12 @@ import { Owner, TotalOwnedNft } from '../model'
 import { owners } from '../utils/entitiesManager'
 
 export async function getOrCreateOwner(
-  ctx: CommonHandlerContext<Store>,
+  // ctx: CommonHandlerContext<Store>,
+  store: Store,
+
   id: string
 ): Promise<Owner> {
-  let owner = await owners.get(ctx.store, Owner, id)
+  let owner = await owners.get(store, Owner, id)
   if (!owner) {
     owner = new Owner({
       id,
