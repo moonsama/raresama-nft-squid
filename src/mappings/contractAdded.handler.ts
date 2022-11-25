@@ -5,7 +5,9 @@ import { fetchContractMetadata } from '../helpers/metadata.helper'
 import { Contract } from '../model'
 import { LogContext } from '../processor'
 import * as collectionFactory from '../types/generated/collection-factory'
-import * as raresamaCollection from '../types/generated/raresama-collection'
+// import * as raresamaCollection from '../types/generated/raresama-collection'
+import * as raresamaCollection from '../abi/CollectionV2'
+
 import { contracts } from '../utils/entitiesManager'
 
 export async function handleNewContract(
@@ -23,13 +25,19 @@ export async function handleNewContract(
   // console.log("block", block);
   const event = evmLog as EvmLog;
   const contractAddress = evmLog.address.toLowerCase();
+  console.log("contract address",contractAddress);
   const data =
     collectionFactory.events[
       'CollectionAdded(uint256,bytes32,address,uint256)'
-    ].decode(evmLog)
+    ].decode(event)
   const address = data.collectionAddress.toLowerCase()
-
+  console.log("data",data);
+  console.log("ctx.chain",ctx._chain);
+  console.log("ctx.block",ctx.block);
+  console.log("address collection",address);
+  // const contractAPI = new raresamaCollection.Contract(ctx, block, address)
   const contractAPI = new raresamaCollection.Contract(ctx, block, address)
+  console.log("contractApi",contractAPI);
 
   const [name, symbol, contractURI, decimals] = await Promise.all([
     contractAPI.name(),
