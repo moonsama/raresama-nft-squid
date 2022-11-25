@@ -1056,10 +1056,10 @@
     "query-string" "^7.1.0"
     "simple-git" "^2.48.0"
 
-"@subsquid/evm-processor@0.1.1":
-  "integrity" "sha512-NPUNtGmJ8ryAVvjVpDB/NS/uF4XQPh42bl6/92qtrRE3ayQjx4EcRQKVO7jKGN1QIEqMscDK1iKNyvMpwawQqg=="
-  "resolved" "https://registry.npmjs.org/@subsquid/evm-processor/-/evm-processor-0.1.1.tgz"
-  "version" "0.1.1"
+"@subsquid/evm-processor@0.1.2":
+  "integrity" "sha512-lqi6XuE/dk8oVRWHv8TqoFXRhX1imqzrDnMIjpKhqFQzzLLnS2+ds9h0J9Dy2EO70Y3keXpezrAEs8XAotv22g=="
+  "resolved" "https://registry.npmjs.org/@subsquid/evm-processor/-/evm-processor-0.1.2.tgz"
+  "version" "0.1.2"
   dependencies:
     "@subsquid/logger" "^0.1.0"
     "@subsquid/rpc-client" "^1.0.2"

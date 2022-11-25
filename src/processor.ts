@@ -74,6 +74,8 @@ processor.run(database, async (ctx) => {
   for (const block of ctx.blocks) {
     for (const item of block.items) {
       if (item.kind === "evmLog") {
+  console.log("item",item)
+
         await handleEvmLog({
           ...ctx,
           // block: block,
@@ -97,12 +99,7 @@ processor.run(database, async (ctx) => {
   //   evmLog: undefined,
   //   transaction: undefined
   // });
-  // await updateAllMetadata({
-  //   ...ctx,
-  //   block: ctx.blocks[ctx.blocks.length - 1].header,
-  //   evmLog: undefined,
-  //   transaction: undefined
-  // });
+ 
   await saveAll(ctx.store);
 });
 
@@ -121,6 +118,7 @@ async function handleEvmLog(ctx: LogContext) {
   const event = evmLog as EvmLog;
   const contractAddress = evmLog.address.toLowerCase();
   const args = evmLog;
+  console.log("args",args)
   if (
     contractAddress === config.FACTORY_ADDRESS &&
     args.topics[0] ===
@@ -128,12 +126,16 @@ async function handleEvmLog(ctx: LogContext) {
         "CollectionAdded(uint256,bytes32,address,uint256)"
       ].topic
   ) {
+  console.log("args",args)
+
     await handleNewContract(ctx);
   } else if (
     await isKnownContract(ctx.store, contractAddress, ctx.block.height)
   )
     switch (args.topics[0]) {
       case raresamaCollection.events["Transfer(address,address,uint256)"].topic:
+  console.log("args",args)
+
         await handleTransfer(ctx);
         break;
       case raresamaCollection.events["URI(uint256)"].topic:
