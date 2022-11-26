@@ -19,15 +19,17 @@ import {
   handleUriAll,
 } from "./mappings";
 import { saveAll } from "./utils/entitiesManager";
-import * as collectionFactory from "./types/generated/collection-factory";
-import * as raresamaCollection from "./types/generated/raresama-collection";
+// import * as collectionFactory from "./types/generated/collection-factory";
+// import * as raresamaCollection from "./types/generated/raresama-collection";
+import * as collectionFactory from "./abi/FactoryV1";
+import * as raresamaCollection from "./abi/CollectionV2";
 import * as config from "./utils/config";
 import { isKnownContract } from "./helpers";
 import { updateAllMetadata } from "./helpers/metadata.helper";
 
 const database = new TypeormDatabase();
 const processor = new EvmBatchProcessor()
-  .setBlockRange({ from: 0 })
+  // .setBlockRange({ from: 596933 })
   .setDataSource({
     chain: config.CHAIN_NODE,
     archive: "https://exosama.archive.subsquid.io/",
@@ -36,7 +38,7 @@ const processor = new EvmBatchProcessor()
     filter: [
       [
         collectionFactory.events[
-          "CollectionAdded(uint256,bytes32,address,uint256)"
+          "CollectionAdded(uint256,bytes32,address,uint256,string,string,uint8,string)"
         ].topic,
       ],
     ],
@@ -74,7 +76,7 @@ processor.run(database, async (ctx) => {
   for (const block of ctx.blocks) {
     for (const item of block.items) {
       if (item.kind === "evmLog") {
-  console.log("item",item)
+        // console.log("item", item);
 
         await handleEvmLog({
           ...ctx,
@@ -99,7 +101,7 @@ processor.run(database, async (ctx) => {
   //   evmLog: undefined,
   //   transaction: undefined
   // });
- 
+
   await saveAll(ctx.store);
 });
 
@@ -118,23 +120,21 @@ async function handleEvmLog(ctx: LogContext) {
   const event = evmLog as EvmLog;
   const contractAddress = evmLog.address.toLowerCase();
   const args = evmLog;
-  console.log("args",args)
+  console.log("args", args);
   if (
     contractAddress === config.FACTORY_ADDRESS &&
     args.topics[0] ===
       collectionFactory.events[
-        "CollectionAdded(uint256,bytes32,address,uint256)"
+        "CollectionAdded(uint256,bytes32,address,uint256,string,string,uint8,string)"
       ].topic
   ) {
-  console.log("args",args)
-
     await handleNewContract(ctx);
   } else if (
     await isKnownContract(ctx.store, contractAddress, ctx.block.height)
   )
     switch (args.topics[0]) {
       case raresamaCollection.events["Transfer(address,address,uint256)"].topic:
-  console.log("args",args)
+        console.log("args", args);
 
         await handleTransfer(ctx);
         break;

@@ -3,7 +3,9 @@ import assert from "assert";
 
 export const abi = new ethers.utils.Interface(getJsonAbi());
 
-export type CollectionAdded0Event = ([id: ethers.BigNumber, template: string, collectionAddress: string, blockNumber: ethers.BigNumber] & {id: ethers.BigNumber, template: string, collectionAddress: string, blockNumber: ethers.BigNumber})
+export type CollectionAdded0Event = ([id: ethers.BigNumber, template: string, collectionAddress: string, blockNumber: ethers.BigNumber, name: string, symbols: string, _decimals: number, _contractURI: string] & {id: ethers.BigNumber, template: string, collectionAddress: string, blockNumber: ethers.BigNumber, name: string, symbols: string, _decimals: number, _contractURI: string})
+
+export type CollectionAddedWithoutConstructor0Event = ([id: ethers.BigNumber, template: string, collectionAddress: string, blockNumber: ethers.BigNumber] & {id: ethers.BigNumber, template: string, collectionAddress: string, blockNumber: ethers.BigNumber})
 
 export type RoleAdminChanged0Event = ([role: string, previousAdminRole: string, newAdminRole: string] & {role: string, previousAdminRole: string, newAdminRole: string})
 
@@ -27,10 +29,17 @@ function decodeEvent(signature: string, data: EvmLog): any {
 }
 
 export const events = {
-  "CollectionAdded(uint256,bytes32,address,uint256)": {
-    topic: abi.getEventTopic("CollectionAdded(uint256,bytes32,address,uint256)"),
+  "CollectionAdded(uint256,bytes32,address,uint256,string,string,uint8,string)": {
+    topic: abi.getEventTopic("CollectionAdded(uint256,bytes32,address,uint256,string,string,uint8,string)"),
     decode(data: EvmLog): CollectionAdded0Event {
-      return decodeEvent("CollectionAdded(uint256,bytes32,address,uint256)", data)
+      return decodeEvent("CollectionAdded(uint256,bytes32,address,uint256,string,string,uint8,string)", data)
+    }
+  }
+  ,
+  "CollectionAddedWithoutConstructor(uint256,bytes32,address,uint256)": {
+    topic: abi.getEventTopic("CollectionAddedWithoutConstructor(uint256,bytes32,address,uint256)"),
+    decode(data: EvmLog): CollectionAddedWithoutConstructor0Event {
+      return decodeEvent("CollectionAddedWithoutConstructor(uint256,bytes32,address,uint256)", data)
     }
   }
   ,
@@ -305,9 +314,64 @@ function getJsonAbi(): any {
           "internalType": "uint256",
           "name": "blockNumber",
           "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "symbols",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint8",
+          "name": "_decimals",
+          "type": "uint8"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "_contractURI",
+          "type": "string"
         }
       ],
       "name": "CollectionAdded",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes32",
+          "name": "template",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "collectionAddress",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "blockNumber",
+          "type": "uint256"
+        }
+      ],
+      "name": "CollectionAddedWithoutConstructor",
       "type": "event"
     },
     {

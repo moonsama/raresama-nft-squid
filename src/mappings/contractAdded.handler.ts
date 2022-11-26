@@ -4,7 +4,8 @@ import { Store } from '@subsquid/typeorm-store'
 import { fetchContractMetadata } from '../helpers/metadata.helper'
 import { Contract } from '../model'
 import { LogContext } from '../processor'
-import * as collectionFactory from '../types/generated/collection-factory'
+import * as collectionFactory from '../abi/FactoryV1'
+// import * as collectionFactory from '../types/generated/collection-factory'
 // import * as raresamaCollection from '../types/generated/raresama-collection'
 import * as raresamaCollection from '../abi/CollectionV2'
 
@@ -28,7 +29,7 @@ export async function handleNewContract(
   console.log("contract address",contractAddress);
   const data =
     collectionFactory.events[
-      'CollectionAdded(uint256,bytes32,address,uint256)'
+      'CollectionAdded(uint256,bytes32,address,uint256,string,string,uint8,string)'
     ].decode(event)
   const address = data.collectionAddress.toLowerCase()
   console.log("data",data);
@@ -39,21 +40,41 @@ export async function handleNewContract(
   const contractAPI = new raresamaCollection.Contract(ctx, block, address)
   console.log("contractApi",contractAPI);
 
-  const [name, symbol, contractURI, decimals] = await Promise.all([
-    contractAPI.name(),
-    contractAPI.symbol(),
-    contractAPI.contractURI(),
-    contractAPI.decimals(),
-  ])
+  if(ctx.block.height == 596931 || ctx.block.height == 596932) {
+    return ;
+  }
+
+  let contractURI="";
+  let decimals=0;
+  let symbol="";
+  let name="";
+
+  // const [  decimals] = await Promise.all([
+  //   // contractAPI.contractURI() ?? "",
+  //   contractAPI.decimals() ?? "",
+  // ])
+  // const [ name, symbol] = await Promise.all([
+  //   contractAPI.name() ?? "",
+  //   contractAPI.symbol() ?? "",
+  // ])
+
+
+
+  // const [name, symbol, contractURI, decimals] = await Promise.all([
+  //   contractAPI.name() ?? "",
+  //   contractAPI.symbol() ?? "",
+  //   contractAPI.contractURI() ?? "",
+  //   contractAPI.decimals() ?? "",
+  // ])
 
   const contract = new Contract({
     id: address,
     factoryId: data.id.toBigInt(),
-    name,
-    symbol,
+    name:data.name,
+    symbol:data.symbols,
     totalSupply: 0n,
-    contractURI,
-    decimals,
+    contractURI:data._contractURI,
+    decimals:data._decimals,
     startBlock: data.blockNumber.toNumber(),
     contractURIUpdated: BigInt(block.timestamp),
     uniqueOwnersCount: 0,

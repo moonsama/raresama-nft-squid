@@ -2,7 +2,8 @@ import { EvmLogHandlerContext } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
 import assert from 'assert'
 import { Contract, Direction, OwnerTransfer, Token, Transfer } from '../model'
-import * as raresamaCollection from '../types/generated/raresama-collection'
+// import * as raresamaCollection from '../types/generated/raresama-collection'
+import * as raresamaCollection from '../abi/CollectionV2'
 import {
   contracts,
   ownerTransfers,

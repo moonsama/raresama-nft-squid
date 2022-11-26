@@ -3,7 +3,8 @@ import assert from 'assert'
 import { fetchContractMetadata } from '../helpers/metadata.helper'
 import { Contract } from '../model'
 import { LogContext } from '../processor'
-import * as raresamaCollection from '../types/generated/raresama-collection'
+// import * as raresamaCollection from '../types/generated/raresama-collection'
+import * as raresamaCollection from '../abi/CollectionV2'
 import { contracts } from '../utils/entitiesManager'
 
 export async function handleContractUri(

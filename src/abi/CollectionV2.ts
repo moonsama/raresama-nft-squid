@@ -1491,7 +1491,7 @@ function getJsonAbi(): any {
       "outputs": [
         {
           "internalType": "string",
-          "name": "",
+          "name": "name",
           "type": "string"
         }
       ],

@@ -75,6 +75,8 @@ To generate a type-safe facade class to decode EVM logs, use `squid-evm-typegen(
 
 ```bash
 npx squid-evm-typegen --abi src/abi/ERC721.json --output src/abi/erc721.ts
+npx squid-evm-typegen --abi src/abi/FactoryV1.json --output src/abi/FactoryV1.ts
+npx squid-evm-typegen --abi src/abi/CollectionV2.json --output src/abi/CollectionV2.ts
 ```
 
 

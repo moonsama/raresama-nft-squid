@@ -65,6 +65,25 @@
       "inputs": [
         {
           "indexed": false,
+          "internalType": "address",
+          "name": "feeRecipient",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "feeValueBps",
+          "type": "uint256"
+        }
+      ],
+      "name": "DefaultSecondarySaleFeeSet",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
           "internalType": "uint256",
           "name": "supply",
           "type": "uint256"
@@ -152,7 +171,13 @@
       "anonymous": false,
       "inputs": [
         {
-          "indexed": true,
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
           "internalType": "address",
           "name": "feeRecipient",
           "type": "address"
@@ -164,7 +189,7 @@
           "type": "uint256"
         }
       ],
-      "name": "SecondarySaleFee",
+      "name": "TokenSecondarySaleFeeSet",
       "type": "event"
     },
     {
@@ -213,6 +238,19 @@
     },
     {
       "inputs": [],
+      "name": "ADMIN_ROLE",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
       "name": "COMPOSITE_CREATOR_ROLE",
       "outputs": [
         {
@@ -252,7 +290,7 @@
     },
     {
       "inputs": [],
-      "name": "MINTER_ROLE",
+      "name": "MANAGER_ROLE",
       "outputs": [
         {
           "internalType": "bytes32",
@@ -265,7 +303,7 @@
     },
     {
       "inputs": [],
-      "name": "OPERATOR_ROLE",
+      "name": "MINTER_ROLE",
       "outputs": [
         {
           "internalType": "bytes32",
@@ -281,9 +319,9 @@
       "name": "VERSION",
       "outputs": [
         {
-          "internalType": "uint256",
+          "internalType": "uint16",
           "name": "",
-          "type": "uint256"
+          "type": "uint16"
         }
       ],
       "stateMutability": "view",
@@ -585,6 +623,32 @@
       "type": "function"
     },
     {
+      "inputs": [],
+      "name": "globalTokenURIBase",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "globalTransformationTokenURIBase",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
       "inputs": [
         {
           "internalType": "bytes32",
@@ -629,19 +693,9 @@
     {
       "inputs": [
         {
-          "internalType": "address",
-          "name": "owner",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "admin",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "minter",
-          "type": "address"
+          "internalType": "address[5]",
+          "name": "addresses",
+          "type": "address[5]"
         },
         {
           "internalType": "string",
@@ -792,12 +846,40 @@
       "type": "function"
     },
     {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "_customTokenURI",
+          "type": "string"
+        },
+        {
+          "internalType": "address payable",
+          "name": "_feeRecipient",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_feeValueBps",
+          "type": "uint256"
+        }
+      ],
+      "name": "mintWithRoyalty",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
       "inputs": [],
       "name": "name",
       "outputs": [
         {
           "internalType": "string",
-          "name": "",
+          "name": "name",
           "type": "string"
         }
       ],
@@ -895,7 +977,7 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "",
+          "name": "_tokenId",
           "type": "uint256"
         },
         {
@@ -975,7 +1057,7 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "",
+          "name": "_tokenId",
           "type": "uint256"
         }
       ],
@@ -1065,6 +1147,42 @@
     {
       "inputs": [
         {
+          "internalType": "uint256",
+          "name": "_id",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "_customTransformationTokenURIBase",
+          "type": "string"
+        }
+      ],
+      "name": "setCustomTransformationTokenURI",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address payable",
+          "name": "_feeRecipient",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_feeValueBps",
+          "type": "uint256"
+        }
+      ],
+      "name": "setDefaultRoyaltyFee",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "string",
           "name": "_defaultTokenURI",
           "type": "string"
@@ -1091,17 +1209,25 @@
     {
       "inputs": [
         {
-          "internalType": "address payable",
-          "name": "_feeRecipient",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_feeValueBps",
-          "type": "uint256"
+          "internalType": "string",
+          "name": "_extension",
+          "type": "string"
         }
       ],
-      "name": "setFee",
+      "name": "setExtensionTokenURI",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_extension",
+          "type": "string"
+        }
+      ],
+      "name": "setExtensionTransformationTokenURI",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -1122,12 +1248,61 @@
     {
       "inputs": [
         {
+          "internalType": "string",
+          "name": "_globalTokenURIBase",
+          "type": "string"
+        }
+      ],
+      "name": "setGlobalTokenURIBase",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_globalTransformationTokenURIBase",
+          "type": "string"
+        }
+      ],
+      "name": "setGlobalTransformationTokenURIBase",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "address",
           "name": "_proxyRegistryAddress",
           "type": "address"
         }
       ],
       "name": "setProxyRegistryAddress",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_tokenId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address payable",
+          "name": "_feeRecipient",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_feeValueBps",
+          "type": "uint256"
+        }
+      ],
+      "name": "setTokenRoyaltyFee",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -1258,6 +1433,25 @@
           "internalType": "contract ITransferListener",
           "name": "",
           "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        }
+      ],
+      "name": "transformationURI",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
         }
       ],
       "stateMutability": "view",
