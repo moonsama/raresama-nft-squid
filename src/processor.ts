@@ -120,7 +120,7 @@ async function handleEvmLog(ctx: LogContext) {
   const event = evmLog as EvmLog;
   const contractAddress = evmLog.address.toLowerCase();
   const args = evmLog;
-  console.log("args", args);
+  // console.log("args", args);
   if (
     contractAddress === config.FACTORY_ADDRESS &&
     args.topics[0] ===
@@ -134,7 +134,8 @@ async function handleEvmLog(ctx: LogContext) {
   )
     switch (args.topics[0]) {
       case raresamaCollection.events["Transfer(address,address,uint256)"].topic:
-        console.log("args", args);
+        // console.log("args", args);
+        console.log("handleTransfer");
 
         await handleTransfer(ctx);
         break;
