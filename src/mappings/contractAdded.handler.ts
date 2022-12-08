@@ -40,9 +40,7 @@ export async function handleNewContract(
   const contractAPI = new raresamaCollection.Contract(ctx, block, address)
   console.log("contractApi",contractAPI);
 
-  if(ctx.block.height == 596931 || ctx.block.height == 596932) {
-    return ;
-  }
+ 
 
   let contractURI="";
   let decimals=0;
@@ -75,7 +73,9 @@ export async function handleNewContract(
     totalSupply: 0n,
     contractURI:data._contractURI,
     decimals:data._decimals,
-    startBlock: data.blockNumber.toNumber(),
+    // startBlock: data.blockNumber.toNumber(),
+    startBlock: ctx.block.height,
+
     contractURIUpdated: BigInt(block.timestamp),
     uniqueOwnersCount: 0,
   })

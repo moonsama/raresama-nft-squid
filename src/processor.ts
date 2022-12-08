@@ -23,6 +23,7 @@ import { saveAll } from "./utils/entitiesManager";
 // import * as raresamaCollection from "./types/generated/raresama-collection";
 import * as collectionFactory from "./abi/FactoryV1";
 import * as raresamaCollection from "./abi/CollectionV2";
+import * as raresamaCollectionV1 from "./abi/CollectionV1";
 import * as config from "./utils/config";
 import { isKnownContract } from "./helpers";
 import { updateAllMetadata } from "./helpers/metadata.helper";
@@ -133,6 +134,12 @@ async function handleEvmLog(ctx: LogContext) {
     await isKnownContract(ctx.store, contractAddress, ctx.block.height)
   )
     switch (args.topics[0]) {
+      case raresamaCollectionV1.events["Transfer(address,address,uint256)"].topic:
+        // console.log("args", args);
+        console.log("handleTransfer");
+
+        await handleTransfer(ctx);
+        break;
       case raresamaCollection.events["Transfer(address,address,uint256)"].topic:
         // console.log("args", args);
         console.log("handleTransfer");
