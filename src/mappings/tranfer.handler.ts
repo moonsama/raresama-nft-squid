@@ -50,14 +50,12 @@ export async function handleTransfer(
       symbol:await contractAPI.symbol(),
       totalSupply: 0n,
       contractURI:await contractAPI.contractURI(),
-      decimals:18,
+      decimals:await contractAPI.decimals(),
       startBlock: ctx.block.height,
       contractURIUpdated: BigInt(block.timestamp),
       uniqueOwnersCount: 0,
     });
-    // await contracts.save(contractEntity);
-    await ctx.store.save(contractEntity);
-
+    await contracts.save(contractEntity);
   }
   
   const data =
