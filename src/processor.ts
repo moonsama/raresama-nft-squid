@@ -6,9 +6,12 @@ import { Store, TypeormDatabase } from "@subsquid/typeorm-store";
 // } from '@subsquid/substrate-processor'
 import {
   assertNotNull,
+  BatchHandlerContext,
+  CommonHandlerContext,
   EvmBatchProcessor,
   EvmBlock,
   EvmLog,
+  EvmTransaction,
   LogHandlerContext,
 } from "@subsquid/evm-processor";
 import {
@@ -25,8 +28,10 @@ import * as collectionFactory from "./abi/FactoryV1";
 import * as raresamaCollection from "./abi/CollectionV2";
 import * as raresamaCollectionV1 from "./abi/CollectionV1";
 import * as config from "./utils/config";
-import { isKnownContract } from "./helpers";
+import { isKnownContract, updateTokenMetadata } from "./helpers";
 import { updateAllMetadata } from "./helpers/metadata.helper";
+import { BlockHandlerContext } from "@subsquid/substrate-processor";
+import { AddLogItem } from "@subsquid/evm-processor/lib/interfaces/dataSelection";
 
 const database = new TypeormDatabase();
 const processor = new EvmBatchProcessor()
@@ -96,32 +101,28 @@ processor.run(database, async (ctx) => {
   for (const block of ctx.blocks) {
     for (const item of block.items) {
       if (item.kind === "evmLog") {
-        // console.log("item", item);
-
         await handleEvmLog({
           ...ctx,
-          // block: block,
-          // evmLog: item.evmLog,
-          // transaction: undefined,
           block: block.header,
           ...item,
         });
 
-        await updateAllMetadata({
-          ...ctx,
-          block: ctx.blocks[ctx.blocks.length - 1].header,
-          ...item,
-        });
+        // await updateAllMetadata({
+        //   ...ctx,
+        //   // block: ctx.blocks[ctx.blocks.length - 1].header,
+        //   evmLog: item.evmLog,
+        //   transaction: item.transaction
+        // });
       }
     }
   }
-  // await updateAllMetadata({
-  //   ...ctx,
-  //   block: ctx.blocks[ctx.blocks.length - 1].header,
-  //   evmLog: undefined,
-  //   transaction: undefined
-  // });
+  let lastBlock = ctx.blocks[ctx.blocks.length - 1].header
+  await updateAllMetadata({
+    ...ctx,
+    block: lastBlock,
+  }, lastBlock);
 
+  
   await saveAll(ctx.store);
 });
 
@@ -130,37 +131,29 @@ export type LogContext = LogHandlerContext<
   {
     evmLog: { topics: true; data: true };
     transaction: { hash: true };
-    // eventLogEvent:EvmLog
-    // block: EvmBlock;
+    block: EvmBlock;
   }
 >;
+
+export type LogContextWithoutItem = BatchHandlerContext<Store, {blocks:EvmBlock[], block:EvmBlock}>
 
 async function handleEvmLog(ctx: LogContext) {
   const { evmLog, store, transaction, block } = ctx;
   const event = evmLog as EvmLog;
   const contractAddress = evmLog.address.toLowerCase();
   const args = evmLog;
-  console.log("contractAddress",contractAddress);
+  console.log("contractAddress", contractAddress);
 
-  if(contractAddress.toLowerCase() === config.PODS_ADDRESS.toLowerCase()
-  && config.PODS_HEIGHT <= ctx.block.height) {
+  if (
+    contractAddress.toLowerCase() === config.PODS_ADDRESS.toLowerCase() &&
+    config.PODS_HEIGHT <= ctx.block.height
+  ) {
     switch (args.topics[0]) {
-      case raresamaCollectionV1.events["Transfer(address,address,uint256)"].topic:
-        // console.log("args", args);
+      case raresamaCollectionV1.events["Transfer(address,address,uint256)"]
+        .topic:
         console.log("handleTransfer");
-
         await handleTransfer(ctx);
         break;
-
-      // case raresamaCollection.events["URI(uint256)"].topic:
-      //   await handleUri(ctx);
-      //   break;
-      // case raresamaCollection.events["URIAll()"].topic:
-      //   await handleUriAll(ctx);
-      //   break;
-      // case raresamaCollection.events["ContractURI()"].topic:
-      //   await handleContractUri(ctx);
-      //   break;
       default:
     }
   }
@@ -175,20 +168,12 @@ async function handleEvmLog(ctx: LogContext) {
   ) {
     await handleNewContract(ctx);
   } else if (
-    await isKnownContract(ctx.store, contractAddress, ctx.block.height) 
-    // ||(contractAddress == config.PODS_ADDRESS && config.PODS_HEIGHT <= ctx.block.height)
+    await isKnownContract(ctx.store, contractAddress, ctx.block.height)
   )
     switch (args.topics[0]) {
-      case raresamaCollectionV1.events["Transfer(address,address,uint256)"].topic:
-        // console.log("args", args);
+      case raresamaCollectionV1.events["Transfer(address,address,uint256)"]
+        .topic:
         console.log("handleTransfer");
-
-        await handleTransfer(ctx);
-        break;
-      case raresamaCollection.events["Transfer(address,address,uint256)"].topic:
-        // console.log("args", args);
-        console.log("handleTransfer");
-
         await handleTransfer(ctx);
         break;
       case raresamaCollection.events["URI(uint256)"].topic:

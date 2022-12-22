@@ -19,7 +19,6 @@ import {
 import { FACTORY_ADDRESS, NULL_ADDRESS, TOKEN_RELATIONS } from '../utils/config'
 import { CommonHandlerContext, LogHandlerContext } from '@subsquid/evm-processor'
 import { LogContext } from '../processor'
-import { handleNewContract } from './contractAdded.handler'
 import { BigNumber, ethers } from 'ethers'
 
 export async function handleTransfer(
@@ -55,7 +54,8 @@ export async function handleTransfer(
       contractURIUpdated: BigInt(block.timestamp),
       uniqueOwnersCount: 0,
     });
-    await contracts.save(contractEntity);
+    contracts.addToUriUpdatedBuffer(contractEntity)
+    contracts.save(contractEntity);
   }
   
   const data =
@@ -97,7 +97,9 @@ export async function handleTransfer(
     // Update old owner stats (only if not minting)
     if (oldOwner) {
       const collsStats = oldOwner.totalCollectionNfts
-      const collStat = findCollectionStat(collsStats, address, false)
+      // const collStat = findCollectionStat(collsStats, address, false)
+      const collStat = findCollectionStat(collsStats, address, true)
+
       collStat.amount -= 1
       if (!collStat.amount) {
         // Remove from the array

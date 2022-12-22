@@ -14,7 +14,9 @@ import {
 // import * as raresamaCollection from '../types/generated/raresama-collection'
 import * as raresamaCollection from '../abi/CollectionV2'
 import { CONTRACT_API_BATCH_SIZE, IPFS_API_BATCH_SIZE } from '../utils/config'
-import { LogContext } from '../processor';
+import { LogContext, LogContextWithoutItem } from '../processor';
+import { BlockHandlerContext, CommonHandlerContext, EvmBlock } from '@subsquid/evm-processor'
+import { Store } from '@subsquid/typeorm-store'
 
 export const BASE_URL = 'https://moonsama.mypinata.cloud/'
 
@@ -185,6 +187,7 @@ export async function batchEntityMapper<T extends EntityWithId>(
 function updateFailedEntity(
   // ctx: CommonHandlerContext<Store>,
   ctx:LogContext,
+  // ctx:LogContextWithoutItem,
   manager: EntitiesCache<EntityWithId>
 ) {
   manager.getBuffer().forEach((entity) => {
@@ -203,18 +206,22 @@ async function getContractUri(
   entity.contractURIUpdated = BigInt(ctx.block.timestamp)
 }
 
-async function getTokenUri(
+export async function getTokenUri(
   // ctx: CommonHandlerContext<Store>,
   ctx: LogContext,
+  // ctx:LogContextWithoutItem,
   entity: Token
 ): Promise<void> {
   const contractAPI = new raresamaCollection.Contract(ctx, entity.contract.id)
   const tokenURI = await contractAPI.tokenURI(BigNumber.from(entity.numericId))
   entity.tokenUri = tokenURI
+  // entity.updatedAt = BigInt(ctx.block.timestamp)
+  // entity.updatedAt = BigInt(ctx.block.timestamp)
   entity.updatedAt = BigInt(ctx.block.timestamp)
+
 }
 
-async function fillTokenMetadata<T extends Token>(
+export async function fillTokenMetadata<T extends Token>(
   // ctx: CommonHandlerContext<Store>,
   ctx: LogContext,
   entity: T,
@@ -258,8 +265,8 @@ async function fillContractMetadata<T extends Contract>(
 }
 
 export async function updateAllMetadata(
-  // ctx: CommonHandlerContext<Store>
-  ctx:LogContext
+  ctx:any,
+  block?:EvmBlock
 ): Promise<void> {
   updateFailedEntity(ctx, contracts)
   updateFailedEntity(ctx, tokens)
