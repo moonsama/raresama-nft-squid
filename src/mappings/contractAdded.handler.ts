@@ -14,7 +14,7 @@ import { contracts } from '../utils/entitiesManager'
 export async function handleNewContract(
   // ctx: LogHandlerContext<Store>
   ctx:LogContext
-): Promise<void> {
+): Promise<Contract> {
   // const { event, block } = ctx
   const { evmLog, store, transaction, block } = ctx;
   const topic = evmLog.topics[0];
@@ -83,4 +83,5 @@ export async function handleNewContract(
 
   ctx.log.info(`Collection added - ${contract.id}`)
   contracts.save(contract)
+  return contract;
 }

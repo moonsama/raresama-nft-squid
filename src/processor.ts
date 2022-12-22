@@ -53,6 +53,25 @@ const processor = new EvmBatchProcessor()
       },
     },
   })
+  .addLog(config.PODS_ADDRESS, {
+    filter: [
+      [
+        raresamaCollection.events["Transfer(address,address,uint256)"].topic,
+        raresamaCollection.events["URI(uint256)"].topic,
+        raresamaCollection.events["URIAll()"].topic,
+        raresamaCollection.events["ContractURI()"].topic,
+      ],
+    ],
+    data: {
+      evmLog: {
+        topics: true,
+        data: true,
+      },
+      transaction: {
+        hash: true,
+      },
+    },
+  })
   .addLog("*", {
     filter: [
       [
@@ -121,7 +140,32 @@ async function handleEvmLog(ctx: LogContext) {
   const event = evmLog as EvmLog;
   const contractAddress = evmLog.address.toLowerCase();
   const args = evmLog;
-  // console.log("args", args);
+  console.log("contractAddress",contractAddress);
+
+  if(contractAddress.toLowerCase() === config.PODS_ADDRESS.toLowerCase()
+  && config.PODS_HEIGHT <= ctx.block.height) {
+    switch (args.topics[0]) {
+      case raresamaCollectionV1.events["Transfer(address,address,uint256)"].topic:
+        // console.log("args", args);
+        console.log("handleTransfer");
+
+        await handleTransfer(ctx);
+        break;
+
+      // case raresamaCollection.events["URI(uint256)"].topic:
+      //   await handleUri(ctx);
+      //   break;
+      // case raresamaCollection.events["URIAll()"].topic:
+      //   await handleUriAll(ctx);
+      //   break;
+      // case raresamaCollection.events["ContractURI()"].topic:
+      //   await handleContractUri(ctx);
+      //   break;
+      default:
+    }
+  }
+
+  // Get collections with the factory
   if (
     contractAddress === config.FACTORY_ADDRESS &&
     args.topics[0] ===
@@ -131,7 +175,8 @@ async function handleEvmLog(ctx: LogContext) {
   ) {
     await handleNewContract(ctx);
   } else if (
-    await isKnownContract(ctx.store, contractAddress, ctx.block.height)
+    await isKnownContract(ctx.store, contractAddress, ctx.block.height) 
+    // ||(contractAddress == config.PODS_ADDRESS && config.PODS_HEIGHT <= ctx.block.height)
   )
     switch (args.topics[0]) {
       case raresamaCollectionV1.events["Transfer(address,address,uint256)"].topic:

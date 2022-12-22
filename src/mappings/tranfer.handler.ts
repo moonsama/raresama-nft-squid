@@ -16,9 +16,11 @@ import {
   findCollectionStat,
   updateTokenMetadata,
 } from '../helpers'
-import { NULL_ADDRESS, TOKEN_RELATIONS } from '../utils/config'
+import { FACTORY_ADDRESS, NULL_ADDRESS, TOKEN_RELATIONS } from '../utils/config'
 import { CommonHandlerContext, LogHandlerContext } from '@subsquid/evm-processor'
 import { LogContext } from '../processor'
+import { handleNewContract } from './contractAdded.handler'
+import { BigNumber, ethers } from 'ethers'
 
 export async function handleTransfer(
   // ctx: LogHandlerContext<Store>
@@ -32,13 +34,32 @@ export async function handleTransfer(
   const args = evmLog;
   const address = evmLog.address.toLowerCase() as string
   const contractAPI = new raresamaCollection.Contract(ctx, address)
-  const contractEntity = (await contracts.get(
+  let contractEntity = (await contracts.get(
     ctx.store,
     Contract,
     address,
     undefined,
-    true
+    false
   )) as Contract
+  if(!contractEntity) {
+    let lenCollection = await ctx.store.count(Contract)
+    contractEntity = new Contract({
+      id:address,
+      factoryId:ethers.BigNumber.from(lenCollection).toBigInt(),
+      name:await contractAPI.name(),
+      symbol:await contractAPI.symbol(),
+      totalSupply: 0n,
+      contractURI:await contractAPI.contractURI(),
+      decimals:18,
+      startBlock: ctx.block.height,
+      contractURIUpdated: BigInt(block.timestamp),
+      uniqueOwnersCount: 0,
+    });
+    // await contracts.save(contractEntity);
+    await ctx.store.save(contractEntity);
+
+  }
+  
   const data =
     raresamaCollection.events['Transfer(address,address,uint256)'].decode(
       evmLog
