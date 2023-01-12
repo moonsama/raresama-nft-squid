@@ -116,13 +116,15 @@ processor.run(database, async (ctx) => {
       }
     }
   }
-  let lastBlock = ctx.blocks[ctx.blocks.length - 1].header
-  await updateAllMetadata({
-    ...ctx,
-    block: lastBlock,
-  }, lastBlock);
+  let lastBlock = ctx.blocks[ctx.blocks.length - 1].header;
+  await updateAllMetadata(
+    {
+      ...ctx,
+      block: lastBlock,
+    },
+    lastBlock
+  );
 
-  
   await saveAll(ctx.store);
 });
 
@@ -135,28 +137,30 @@ export type LogContext = LogHandlerContext<
   }
 >;
 
-export type LogContextWithoutItem = BatchHandlerContext<Store, {blocks:EvmBlock[], block:EvmBlock}>
+export type LogContextWithoutItem = BatchHandlerContext<
+  Store,
+  { blocks: EvmBlock[]; block: EvmBlock }
+>;
 
 async function handleEvmLog(ctx: LogContext) {
   const { evmLog, store, transaction, block } = ctx;
   const event = evmLog as EvmLog;
   const contractAddress = evmLog.address.toLowerCase();
   const args = evmLog;
-  console.log("contractAddress", contractAddress);
 
-  if (
-    contractAddress.toLowerCase() === config.PODS_ADDRESS.toLowerCase() &&
-    config.PODS_HEIGHT <= ctx.block.height
-  ) {
-    switch (args.topics[0]) {
-      case raresamaCollectionV1.events["Transfer(address,address,uint256)"]
-        .topic:
-        console.log("handleTransfer");
-        await handleTransfer(ctx);
-        break;
-      default:
-    }
-  }
+  // if (
+  //   contractAddress.toLowerCase() === config.PODS_ADDRESS.toLowerCase() &&
+  //   config.PODS_HEIGHT <= ctx.block.height
+  // ) {
+  //   switch (args.topics[0]) {
+  //     case raresamaCollectionV1.events["Transfer(address,address,uint256)"]
+  //       .topic:
+  //       console.log("handleTransfer");
+  //       await handleTransfer(ctx);
+  //       break;
+  //     default:
+  //   }
+  // }
 
   // Get collections with the factory
   if (
@@ -166,10 +170,14 @@ async function handleEvmLog(ctx: LogContext) {
         "CollectionAdded(uint256,bytes32,address,uint256,string,string,uint8,string)"
       ].topic
   ) {
+    console.log("contractAddress", contractAddress);
+
     await handleNewContract(ctx);
   } else if (
     await isKnownContract(ctx.store, contractAddress, ctx.block.height)
-  )
+  ) {
+    // console.log("contractAddress", contractAddress);
+
     switch (args.topics[0]) {
       case raresamaCollectionV1.events["Transfer(address,address,uint256)"]
         .topic:
@@ -187,4 +195,5 @@ async function handleEvmLog(ctx: LogContext) {
         break;
       default:
     }
+  }
 }

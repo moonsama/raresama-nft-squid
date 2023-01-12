@@ -1,8 +1,8 @@
 manifestVersion: subsquid.io/v0.1
-name:  raresama-nft-exosama
+name:  raresama-nft-exosama-dev
 version: 1
 description: |-
- A indexer for all nft in Raresama marketplace
+ A indexer for nft dev EXN in Raresama marketplace
 build:
 
 deploy:
