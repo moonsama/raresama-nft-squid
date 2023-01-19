@@ -10,11 +10,12 @@ import * as collectionFactory from '../abi/FactoryV1'
 import * as raresamaCollection from '../abi/CollectionV2'
 
 import { contracts } from '../utils/entitiesManager'
+import { EXCLUDE_ADDRESS } from '../utils/config'
 
 export async function handleNewContract(
   // ctx: LogHandlerContext<Store>
   ctx:LogContext
-): Promise<Contract> {
+): Promise<Contract | undefined> {
   // const { event, block } = ctx
   const { evmLog, store, transaction, block } = ctx;
   const topic = evmLog.topics[0];
@@ -32,6 +33,10 @@ export async function handleNewContract(
       'CollectionAdded(uint256,bytes32,address,uint256,string,string,uint8,string)'
     ].decode(event)
   const address = data.collectionAddress.toLowerCase()
+
+  if(EXCLUDE_ADDRESS.includes(address)) {
+    return;
+  }
   console.log("data",data);
   console.log("ctx.chain",ctx._chain);
   console.log("ctx.block",ctx.block);

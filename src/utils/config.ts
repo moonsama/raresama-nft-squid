@@ -15,7 +15,9 @@ export const FACTORY_ADDRESS= process.env.FACTORY_ADDRESS || "0xd08b0cDD31bd5e1a
 export const PODS_ADDRESS = process.env.PODS_ADDRESS || "0xaa821f830beff26626379d840621b92911ea53b7".toLowerCase();
 export const PODS_HEIGHT = process.env.PODS_HEIGHT || 691012;
 
-
+export const EXCLUDE_ADDRESS = [
+  "0xea1d5002ff97f8b570c29f5f3f1b33deb4c2c406"
+]
 export const NULL_ADDRESS = '0x0000000000000000000000000000000000000000'
 export const TOKEN_RELATIONS = {
   metadata: true,
