@@ -115,15 +115,16 @@ processor.run(database, async (ctx) => {
         // });
       }
     }
-  }
-  let lastBlock = ctx.blocks[ctx.blocks.length - 1].header
-  await updateAllMetadata({
-    ...ctx,
-    block: lastBlock,
-  }, lastBlock);
-
+    let lastBlock = ctx.blocks[ctx.blocks.length - 1].header
+    await updateAllMetadata({
+      ...ctx,
+      block: lastBlock,
+    }, lastBlock);
   
-  await saveAll(ctx.store);
+    
+    await saveAll(ctx.store);
+  }
+ 
 });
 
 export type LogContext = LogHandlerContext<
