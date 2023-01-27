@@ -201,8 +201,8 @@ async function getContractUri(
   entity: Contract
 ): Promise<void> {
   const contractAPI = new raresamaCollection.Contract(ctx, entity.id)
-  // const contractURI = await contractAPI.contractURI()
-  // entity.contractURI = contractURI
+  const contractURI = await contractAPI.contractURI()
+  entity.contractURI = contractURI
   entity.contractURIUpdated = BigInt(ctx.block.timestamp)
 }
 
