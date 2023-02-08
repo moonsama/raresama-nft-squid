@@ -21,6 +21,8 @@ type Metadata @entity {
   artist: String @index
   # artist_url field of metadata
   artistUrl: String
+  contentType:String
+  contentLength:String
 }
 
 type Token @entity {

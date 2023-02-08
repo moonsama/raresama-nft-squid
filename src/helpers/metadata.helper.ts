@@ -1,7 +1,7 @@
 import https from 'https'
 import Axios from 'axios'
 import assert from 'assert'
-import { BigNumber } from 'ethers'
+import { BigNumber, ethers } from 'ethers'
 import { Attribute, Contract, Metadata, Token } from '../model'
 import { IRawMetadata } from '../types/custom/metadata'
 import {
@@ -13,10 +13,13 @@ import {
 } from '../utils/entitiesManager'
 // import * as raresamaCollection from '../types/generated/raresama-collection'
 import * as raresamaCollection from '../abi/CollectionV2'
+import ABI_COLLECTION from '../abi/CollectionV2.json'
 import { CONTRACT_API_BATCH_SIZE, IPFS_API_BATCH_SIZE } from '../utils/config'
 import { LogContext, LogContextWithoutItem } from '../processor';
 import { BlockHandlerContext, CommonHandlerContext, EvmBlock } from '@subsquid/evm-processor'
 import { Store } from '@subsquid/typeorm-store'
+import { getUrlContentType } from '../utils/media'
+
 
 export const BASE_URL = 'https://moonsama.mypinata.cloud/'
 
@@ -118,6 +121,13 @@ export async function parseMetadata(
   }
   // ctx.log.info(attributes)
   // ctx.log.info(metadata)
+  if(rawMeta.image) {
+    const {contentType, contentLength} = await getUrlContentType(sanitizeIpfsUrl(rawMeta.image))
+    console.log("contentType",contentType)
+    console.log("contentLength",contentLength)
+    metadata.contentType=contentType;
+    metadata.contentLength=contentLength;
+  }
   return metadata
 }
 
@@ -128,6 +138,8 @@ interface ContractMetadata {
   externalLink: string
   artist?: string
   artistUrl?: string
+  contentType?:string,
+  contentLength?:string | null,
 }
 
 export const fetchContractMetadata = async (
@@ -200,10 +212,19 @@ async function getContractUri(
   ctx: LogContext,
   entity: Contract
 ): Promise<void> {
-  const contractAPI = new raresamaCollection.Contract(ctx, entity.id)
-  // const contractURI = await contractAPI.contractURI()
-  // entity.contractURI = contractURI
-  entity.contractURIUpdated = BigInt(ctx.block.timestamp)
+  console.log("getContractURI of : ", entity.id)
+  try{
+    const contractAPI = new ethers.Contract(entity.id, ABI_COLLECTION, new ethers.providers.JsonRpcProvider(process.env.CHAIN_RPC ?? "https://rpc.exosama.com"));
+    const contractURI = await contractAPI.contractURI()
+    console.log("contractURI",contractURI)
+    entity.contractURI = contractURI
+    entity.contractURIUpdated = BigInt(ctx.block.timestamp)
+  }catch(e){
+    console.log(`error : ${e}`)
+    entity.contractURI = "ipfs://QmdgzLkcVuNcHar3jBYqYNrgh42giyc6n8skaesTRjZQhr"
+    entity.contractURIUpdated = BigInt(ctx.block.timestamp)
+  }
+ 
 }
 
 export async function getTokenUri(
@@ -212,13 +233,19 @@ export async function getTokenUri(
   // ctx:LogContextWithoutItem,
   entity: Token
 ): Promise<void> {
-  const contractAPI = new raresamaCollection.Contract(ctx, entity.contract.id)
-  const tokenURI = await contractAPI.tokenURI(BigNumber.from(entity.numericId))
-  entity.tokenUri = tokenURI
-  // entity.updatedAt = BigInt(ctx.block.timestamp)
-  // entity.updatedAt = BigInt(ctx.block.timestamp)
+  console.log("getTokenURI")
+  const contractAPI = new ethers.Contract(entity.contract.id, ABI_COLLECTION, new ethers.providers.JsonRpcProvider(process.env.CHAIN_RPC ?? "https://rpc.exosama.com"));
+  // const contractAPI = new raresamaCollection.Contract(ctx, entity.contract.id)
+  try {
+    const tokenURI = await contractAPI.tokenURI(ethers.BigNumber.from(entity.numericId.toString()))
+    console.log("tokenURI",tokenURI)
+    entity.tokenUri = tokenURI
+  } catch (error) {
+    // Token uri doesn't exits or token burned => use default token uri
+    entity.tokenUri = "ipfs://QmdgzLkcVuNcHar3jBYqYNrgh42giyc6n8skaesTRjZQhr"
+    // tokens.delFromUriUpdatedBuffer(entity); // Not need to be delete
+  }
   entity.updatedAt = BigInt(ctx.block.timestamp)
-
 }
 
 export async function fillTokenMetadata<T extends Token>(

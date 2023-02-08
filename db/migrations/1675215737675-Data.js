@@ -1,8 +1,8 @@
-module.exports = class Data1673537105196 {
-    name = 'Data1673537105196'
+module.exports = class Data1675215737675 {
+    name = 'Data1675215737675'
 
     async up(db) {
-        await db.query(`CREATE TABLE "metadata" ("id" character varying NOT NULL, "name" text, "description" text, "image" text, "external_url" text, "attributes" jsonb, "type" text, "composite" boolean, "layers" text array, "artist" text, "artist_url" text, CONSTRAINT "PK_56b22355e89941b9792c04ab176" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE TABLE "metadata" ("id" character varying NOT NULL, "name" text, "description" text, "image" text, "external_url" text, "attributes" jsonb, "type" text, "composite" boolean, "layers" text array, "artist" text, "artist_url" text, "content_type" text, "content_length" text, CONSTRAINT "PK_56b22355e89941b9792c04ab176" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_86eb50b34115e79dec4f778f00" ON "metadata" ("name") `)
         await db.query(`CREATE INDEX "IDX_d80eccd02959378140f86342f1" ON "metadata" ("type") `)
         await db.query(`CREATE INDEX "IDX_08284c06a171c6c4719d95b881" ON "metadata" ("artist") `)

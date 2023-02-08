@@ -111,12 +111,12 @@ export async function handleTransfer(
     token.owner = owner
     if (!owner) contractEntity.totalSupply -= 1n
   }
-  // Check if burn is done with the to address equal AddressZero. Try delete this token on the db and caches.
-  if(data.to.toLowerCase()== ethers.constants.AddressZero) {
-    tokens.delFromUriUpdatedBuffer(token);
-    await ctx.store.remove(token);
-    return;
-  }
+  // // Check if burn is done with the to address equal AddressZero. Try delete this token on the db and caches.
+  // if(data.to.toLowerCase()== ethers.constants.AddressZero) {
+  //   tokens.delFromUriUpdatedBuffer(token);
+  //   await ctx.store.remove(token);
+  //   return;
+  // }
   // Update current owner stats if not burning
   if (owner) {
     const collsStats = owner.totalCollectionNfts

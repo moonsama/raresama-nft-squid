@@ -17,13 +17,7 @@ export async function handleNewContract(
 ): Promise<Contract> {
   // const { event, block } = ctx
   const { evmLog, store, transaction, block } = ctx;
-  const topic = evmLog.topics[0];
-  // const evmLog = ((event.args.log || event.args));
 
-  const args = evmLog;
-  // console.log("evmLog", evmLog);
-  // console.log("transaction", transaction);
-  // console.log("block", block);
   const event = evmLog as EvmLog;
   const contractAddress = evmLog.address.toLowerCase();
   console.log("contract address",contractAddress);
@@ -33,37 +27,9 @@ export async function handleNewContract(
     ].decode(event)
   const address = data.collectionAddress.toLowerCase()
   console.log("data",data);
-  console.log("ctx.chain",ctx._chain);
-  console.log("ctx.block",ctx.block);
   console.log("address collection",address);
-  // const contractAPI = new raresamaCollection.Contract(ctx, block, address)
   const contractAPI = new raresamaCollection.Contract(ctx, block, address)
   console.log("contractApi",contractAPI);
-
- 
-
-  let contractURI="";
-  let decimals=0;
-  let symbol="";
-  let name="";
-
-  // const [  decimals] = await Promise.all([
-  //   // contractAPI.contractURI() ?? "",
-  //   contractAPI.decimals() ?? "",
-  // ])
-  // const [ name, symbol] = await Promise.all([
-  //   contractAPI.name() ?? "",
-  //   contractAPI.symbol() ?? "",
-  // ])
-
-
-
-  // const [name, symbol, contractURI, decimals] = await Promise.all([
-  //   contractAPI.name() ?? "",
-  //   contractAPI.symbol() ?? "",
-  //   contractAPI.contractURI() ?? "",
-  //   contractAPI.decimals() ?? "",
-  // ])
 
   const contract = new Contract({
     id: address,
@@ -73,9 +39,7 @@ export async function handleNewContract(
     totalSupply: 0n,
     contractURI:data._contractURI,
     decimals:data._decimals,
-    // startBlock: data.blockNumber.toNumber(),
     startBlock: ctx.block.height,
-
     contractURIUpdated: BigInt(block.timestamp),
     uniqueOwnersCount: 0,
   })
