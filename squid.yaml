@@ -8,6 +8,10 @@ description: |-
 build:
 scale:
   dedicated: true
+  profile:
+    large
+    # load-balance three replicas
+  replicas: 3
 deploy:
   addons:
     postgres:
@@ -27,6 +31,3 @@ deploy:
         "--dumb-cache-max-age",
         "1000",
       ]
-    profile: large
-    # load-balance three replicas
-    replicas: 3
