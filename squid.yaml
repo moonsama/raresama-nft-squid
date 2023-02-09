@@ -8,10 +8,10 @@ description: |-
 build:
 scale:
   dedicated: true
-  profile:
-    large
+  api:
+    profile: large
     # load-balance three replicas
-  replicas: 3
+    replicas: 3
 deploy:
   addons:
     postgres:
