@@ -66,6 +66,7 @@ export async function handleCollectionAdded(
   //   contractAPI.contractURI() ?? "",
   //   contractAPI.decimals() ?? "",
   // ])
+  ctx.log.info(`collectionAddedHandler:: [NEW COLLECTION] name: ${data?.name} symbol: ${data?.symbols} contractURI: ${data?._contractURI} decimals: ${data?._decimals} contractAddress: ${contractAddress}`)
 
   const contract = new Contract({
     id: address,

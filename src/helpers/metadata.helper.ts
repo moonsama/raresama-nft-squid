@@ -200,10 +200,8 @@ async function getContractUri(
   entity: Contract
 ): Promise<void> {
   // const contractAPI = new raresamaCollection.Contract(ctx, entity.id)
-  console.log("getContractURI")
   const contractAPI = new ethers.Contract(entity.id, ABI_COLLECTION, new ethers.providers.JsonRpcProvider(process.env.CHAIN_RPC ?? "https://rpc.exosama.com"));
   const contractURI = await contractAPI.contractURI()
-  console.log("contractURI", contractURI)
   entity.contractURI = contractURI
   entity.contractURIUpdated = BigInt(ctx.block.timestamp)
 }
@@ -214,13 +212,10 @@ export async function getTokenUri(
   // ctx:LogContextWithoutItem,
   entity: Token
 ): Promise<void> {
-  console.log("getTokenURI bro")
-  console.log("entity", entity)
   const contractAPI = new ethers.Contract(entity.contract.id, ABI_COLLECTION, new ethers.providers.JsonRpcProvider(process.env.CHAIN_RPC ?? "https://rpc.exosama.com"));
   // const contractAPI = new raresamaCollection.Contract(ctx, entity.contract.id)
   try {
     const tokenURI = await contractAPI.tokenURI(ethers.BigNumber.from(entity.numericId.toString()))
-    console.log("tokenURI", tokenURI)
     entity.tokenUri = tokenURI
   } catch (error) {
     // Token doesn't exits
