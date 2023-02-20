@@ -12,13 +12,11 @@ import {
   tokens,
 } from '../utils/entitiesManager'
 // import * as raresamaCollection from '../types/generated/raresama-collection'
-import * as raresamaCollection from '../abi/CollectionV2'
-import ABI_COLLECTION from '../abi/CollectionV2.json'
+import { ABI_JSON as ABI_COLLECTION } from '../abi/CollectionV2.abi'
 import { CONTRACT_API_BATCH_SIZE, IPFS_API_BATCH_SIZE } from '../utils/config'
 import { LogContext, LogContextWithoutItem } from '../processor';
 import { BlockHandlerContext, CommonHandlerContext, EvmBlock } from '@subsquid/evm-processor'
 import { Store } from '@subsquid/typeorm-store'
-
 export const BASE_URL = 'https://moonsama.mypinata.cloud/'
 
 export const api = Axios.create({
@@ -133,7 +131,7 @@ interface ContractMetadata {
 
 export const fetchContractMetadata = async (
   // ctx: CommonHandlerContext<Store>,
-  ctx:LogContext,
+  ctx: LogContext,
   url: string
 ): Promise<ContractMetadata | undefined> => {
   const properUrl = sanitizeIpfsUrl(url)
@@ -187,7 +185,7 @@ export async function batchEntityMapper<T extends EntityWithId>(
 
 function updateFailedEntity(
   // ctx: CommonHandlerContext<Store>,
-  ctx:LogContext,
+  ctx: LogContext,
   // ctx:LogContextWithoutItem,
   manager: EntitiesCache<EntityWithId>
 ) {
@@ -205,7 +203,7 @@ async function getContractUri(
   console.log("getContractURI")
   const contractAPI = new ethers.Contract(entity.id, ABI_COLLECTION, new ethers.providers.JsonRpcProvider(process.env.CHAIN_RPC ?? "https://rpc.exosama.com"));
   const contractURI = await contractAPI.contractURI()
-  console.log("contractURI",contractURI)
+  console.log("contractURI", contractURI)
   entity.contractURI = contractURI
   entity.contractURIUpdated = BigInt(ctx.block.timestamp)
 }
@@ -217,12 +215,12 @@ export async function getTokenUri(
   entity: Token
 ): Promise<void> {
   console.log("getTokenURI bro")
-  console.log("entity",entity)
+  console.log("entity", entity)
   const contractAPI = new ethers.Contract(entity.contract.id, ABI_COLLECTION, new ethers.providers.JsonRpcProvider(process.env.CHAIN_RPC ?? "https://rpc.exosama.com"));
   // const contractAPI = new raresamaCollection.Contract(ctx, entity.contract.id)
   try {
     const tokenURI = await contractAPI.tokenURI(ethers.BigNumber.from(entity.numericId.toString()))
-    console.log("tokenURI",tokenURI)
+    console.log("tokenURI", tokenURI)
     entity.tokenUri = tokenURI
   } catch (error) {
     // Token doesn't exits
@@ -257,7 +255,7 @@ export async function fillTokenMetadata<T extends Token>(
 }
 async function fillContractMetadata<T extends Contract>(
   // ctx: CommonHandlerContext<Store>,
-  ctx:LogContext,
+  ctx: LogContext,
   entity: T,
   manager: EntitiesCache<T>
 ): Promise<void> {
@@ -277,8 +275,8 @@ async function fillContractMetadata<T extends Contract>(
 }
 
 export async function updateAllMetadata(
-  ctx:any,
-  block?:EvmBlock
+  ctx: any,
+  block?: EvmBlock
 ): Promise<void> {
   updateFailedEntity(ctx, contracts)
   updateFailedEntity(ctx, tokens)

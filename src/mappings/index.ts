@@ -1,4 +1,5 @@
-export * from './contractAdded.handler'
+export * from './collectionAdded.handler'
+export * from './collectionAddedWithoutConstructor.handler'
 export * from './tranfer.handler'
 export * from './uri.handler'
 export * from './uriAll.handler'

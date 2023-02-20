@@ -12,9 +12,9 @@ import * as raresamaCollection from '../abi/CollectionV2'
 import { contracts } from '../utils/entitiesManager'
 import { EXCLUDE_ADDRESS } from '../utils/config'
 
-export async function handleNewContract(
+export async function handleCollectionAdded(
   // ctx: LogHandlerContext<Store>
-  ctx:LogContext
+  ctx: LogContext
 ): Promise<Contract | undefined> {
   // const { event, block } = ctx
   const { evmLog, store, transaction, block } = ctx;
@@ -27,30 +27,27 @@ export async function handleNewContract(
   // console.log("block", block);
   const event = evmLog as EvmLog;
   const contractAddress = evmLog.address.toLowerCase();
-  console.log("contract address",contractAddress);
-  const data =
-    collectionFactory.events[
-      'CollectionAdded(uint256,bytes32,address,uint256,string,string,uint8,string)'
-    ].decode(event)
+  //console.log("contract address", contractAddress);
+  const data = collectionFactory.events.CollectionAdded.decode(event)
   const address = data.collectionAddress.toLowerCase()
 
-  if(EXCLUDE_ADDRESS.includes(address)) {
+  if (EXCLUDE_ADDRESS.includes(address)) {
     return;
   }
-  console.log("data",data);
-  console.log("ctx.chain",ctx._chain);
-  console.log("ctx.block",ctx.block);
-  console.log("address collection",address);
+  //console.log("data", data);
+  //console.log("ctx.chain", ctx._chain);
+  //console.log("ctx.block", ctx.block);
+  //console.log("address collection", address);
   // const contractAPI = new raresamaCollection.Contract(ctx, block, address)
   const contractAPI = new raresamaCollection.Contract(ctx, block, address)
-  console.log("contractApi",contractAPI);
+  //console.log("contractApi", contractAPI);
 
- 
 
-  let contractURI="";
-  let decimals=0;
-  let symbol="";
-  let name="";
+
+  let contractURI = "";
+  let decimals = 0;
+  let symbol = "";
+  let name = "";
 
   // const [  decimals] = await Promise.all([
   //   // contractAPI.contractURI() ?? "",
@@ -73,11 +70,11 @@ export async function handleNewContract(
   const contract = new Contract({
     id: address,
     factoryId: data.id.toBigInt(),
-    name:data.name,
-    symbol:data.symbols,
+    name: data.name,
+    symbol: data.symbols,
     totalSupply: 0n,
-    contractURI:data._contractURI,
-    decimals:data._decimals,
+    contractURI: data._contractURI,
+    decimals: data._decimals,
     // startBlock: data.blockNumber.toNumber(),
     startBlock: ctx.block.height,
 

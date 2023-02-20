@@ -23,7 +23,7 @@ import { BigNumber, ethers } from 'ethers'
 
 export async function handleTransfer(
   // ctx: LogHandlerContext<Store>
-  ctx:LogContext
+  ctx: LogContext
 ): Promise<void> {
   // const { event, block } = ctx
   const { evmLog, store, transaction, block } = ctx;
@@ -40,16 +40,16 @@ export async function handleTransfer(
     undefined,
     false
   )) as Contract
-  if(!contractEntity) {
+  if (!contractEntity) {
     let lenCollection = await ctx.store.count(Contract)
     contractEntity = new Contract({
-      id:address,
-      factoryId:ethers.BigNumber.from(lenCollection).toBigInt(),
-      name:await contractAPI.name(),
-      symbol:await contractAPI.symbol(),
+      id: address,
+      factoryId: ethers.BigNumber.from(lenCollection).toBigInt(),
+      name: await contractAPI.name(),
+      symbol: await contractAPI.symbol(),
       totalSupply: 0n,
-      contractURI:await contractAPI.contractURI(),
-      decimals:await contractAPI.decimals(),
+      contractURI: await contractAPI.contractURI(),
+      decimals: await contractAPI.decimals(),
       startBlock: ctx.block.height,
       contractURIUpdated: BigInt(block.timestamp),
       uniqueOwnersCount: 0,
@@ -57,9 +57,9 @@ export async function handleTransfer(
     contracts.addToUriUpdatedBuffer(contractEntity)
     contracts.save(contractEntity);
   }
-  
+
   const data =
-    raresamaCollection.events['Transfer(address,address,uint256)'].decode(
+    raresamaCollection.events.Transfer.decode(
       evmLog
     )
   const oldOwner =
@@ -130,7 +130,7 @@ export async function handleTransfer(
     timestamp: BigInt(block.timestamp),
     block: block.height,
     // transactionHash: event.evmTxHash,
-    transactionHash:block.transactionsRoot
+    transactionHash: block.transactionsRoot
   })
 
   transfers.save(transfer)

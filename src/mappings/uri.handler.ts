@@ -17,9 +17,9 @@ export async function handleUri(
   const { evmLog, store } = ctx
   const event = evmLog as EvmLog;
   // const evmLog = event.args.log || event.args
-  
+
   const address = (<string>evmLog.address).toLowerCase()
-  const { tokenId } = raresamaCollection.events['URI(uint256)'].decode(evmLog)
+  const { tokenId } = raresamaCollection.events.URI.decode(evmLog)
   const tokenAddress = getTokenId(address, tokenId.toBigInt())
   const token = await tokens.get(
     store,

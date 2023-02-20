@@ -16,7 +16,8 @@ import {
 } from "@subsquid/evm-processor";
 import {
   handleContractUri,
-  handleNewContract,
+  handleCollectionAddedWithoutConstructor,
+  handleCollectionAdded,
   handleTransfer,
   handleUri,
   handleUriAll,
@@ -142,12 +143,8 @@ async function handleEvmLog(ctx: LogContext) {
   const event = evmLog as EvmLog;
   const contractAddress = evmLog.address.toLowerCase();
   const args = evmLog;
-  console.log("contractAddress", contractAddress);
 
-  if (
-    contractAddress.toLowerCase() === config.PODS_ADDRESS.toLowerCase() &&
-    config.PODS_HEIGHT <= ctx.block.height
-  ) {
+  if (contractAddress.toLowerCase() === config.PODS_ADDRESS.toLowerCase() && config.PODS_HEIGHT <= ctx.block.height) {
     switch (args.topics[0]) {
       case raresamaCollectionV1.events.Transfer.topic:
         await handleTransfer(ctx);
@@ -157,8 +154,10 @@ async function handleEvmLog(ctx: LogContext) {
   }
 
   // Get collections with the factory
-  if (contractAddress === config.FACTORY_ADDRESS && [collectionFactory.events.CollectionAdded.topic, collectionFactory.events.CollectionAddedWithoutConstructor.topic].includes(args.topics[0])) {
-    await handleNewContract(ctx);
+  if (contractAddress === config.FACTORY_ADDRESS && collectionFactory.events.CollectionAdded.topic === args.topics[0]) {
+    await handleCollectionAdded(ctx);
+  } else if (contractAddress === config.FACTORY_ADDRESS && collectionFactory.events.CollectionAddedWithoutConstructor.topic === args.topics[0]) {
+    await handleCollectionAddedWithoutConstructor(ctx);
   } else if (
     await isKnownContract(ctx.store, contractAddress, ctx.block.height)
   )
