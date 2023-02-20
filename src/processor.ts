@@ -43,9 +43,8 @@ const processor = new EvmBatchProcessor()
   .addLog(config.FACTORY_ADDRESS, {
     filter: [
       [
-        collectionFactory.events[
-          "CollectionAdded(uint256,bytes32,address,uint256,string,string,uint8,string)"
-        ].topic,
+        collectionFactory.events.CollectionAdded.topic,
+        collectionFactory.events.CollectionAddedWithoutConstructor.topic,
       ],
     ],
     data: {
@@ -61,10 +60,10 @@ const processor = new EvmBatchProcessor()
   .addLog(config.PODS_ADDRESS, {
     filter: [
       [
-        raresamaCollection.events["Transfer(address,address,uint256)"].topic,
-        raresamaCollection.events["URI(uint256)"].topic,
-        raresamaCollection.events["URIAll()"].topic,
-        raresamaCollection.events["ContractURI()"].topic,
+        raresamaCollection.events.Transfer.topic,
+        raresamaCollection.events.URI.topic,
+        raresamaCollection.events.URIAll.topic,
+        raresamaCollection.events.ContractURI.topic,
       ],
     ],
     data: {
@@ -80,10 +79,10 @@ const processor = new EvmBatchProcessor()
   .addLog("*", {
     filter: [
       [
-        raresamaCollection.events["Transfer(address,address,uint256)"].topic,
-        raresamaCollection.events["URI(uint256)"].topic,
-        raresamaCollection.events["URIAll()"].topic,
-        raresamaCollection.events["ContractURI()"].topic,
+        raresamaCollection.events.Transfer.topic,
+        raresamaCollection.events.URI.topic,
+        raresamaCollection.events.URIAll.topic,
+        raresamaCollection.events.ContractURI.topic,
       ],
     ],
     data: {
@@ -120,11 +119,11 @@ processor.run(database, async (ctx) => {
       ...ctx,
       block: lastBlock,
     }, lastBlock);
-  
-    
+
+
     await saveAll(ctx.store);
   }
- 
+
 });
 
 export type LogContext = LogHandlerContext<
@@ -136,7 +135,7 @@ export type LogContext = LogHandlerContext<
   }
 >;
 
-export type LogContextWithoutItem = BatchHandlerContext<Store, {blocks:EvmBlock[], block:EvmBlock}>
+export type LogContextWithoutItem = BatchHandlerContext<Store, { blocks: EvmBlock[], block: EvmBlock }>
 
 async function handleEvmLog(ctx: LogContext) {
   const { evmLog, store, transaction, block } = ctx;
@@ -150,9 +149,7 @@ async function handleEvmLog(ctx: LogContext) {
     config.PODS_HEIGHT <= ctx.block.height
   ) {
     switch (args.topics[0]) {
-      case raresamaCollectionV1.events["Transfer(address,address,uint256)"]
-        .topic:
-        console.log("handleTransfer");
+      case raresamaCollectionV1.events.Transfer.topic:
         await handleTransfer(ctx);
         break;
       default:
@@ -160,30 +157,22 @@ async function handleEvmLog(ctx: LogContext) {
   }
 
   // Get collections with the factory
-  if (
-    contractAddress === config.FACTORY_ADDRESS &&
-    args.topics[0] ===
-      collectionFactory.events[
-        "CollectionAdded(uint256,bytes32,address,uint256,string,string,uint8,string)"
-      ].topic
-  ) {
+  if (contractAddress === config.FACTORY_ADDRESS && [collectionFactory.events.CollectionAdded.topic, collectionFactory.events.CollectionAddedWithoutConstructor.topic].includes(args.topics[0])) {
     await handleNewContract(ctx);
   } else if (
     await isKnownContract(ctx.store, contractAddress, ctx.block.height)
   )
     switch (args.topics[0]) {
-      case raresamaCollectionV1.events["Transfer(address,address,uint256)"]
-        .topic:
-        console.log("handleTransfer");
+      case raresamaCollectionV1.events.Transfer.topic:
         await handleTransfer(ctx);
         break;
-      case raresamaCollection.events["URI(uint256)"].topic:
+      case raresamaCollection.events.URI.topic:
         await handleUri(ctx);
         break;
-      case raresamaCollection.events["URIAll()"].topic:
+      case raresamaCollection.events.URIAll.topic:
         await handleUriAll(ctx);
         break;
-      case raresamaCollection.events["ContractURI()"].topic:
+      case raresamaCollection.events.ContractURI.topic:
         await handleContractUri(ctx);
         break;
       default:

@@ -1,6 +1,6 @@
 import * as ethers from 'ethers'
 import {LogEvent, Func, ContractBase} from './abi.support'
-import {ABI_JSON} from './CollectionV2.abi'
+import {ABI_JSON} from './RaresamaCollection.abi'
 
 export const abi = new ethers.utils.Interface(ABI_JSON);
 
@@ -10,12 +10,6 @@ export const events = {
     ),
     ApprovalForAll: new LogEvent<([owner: string, operator: string, approved: boolean] & {owner: string, operator: string, approved: boolean})>(
         abi, '0x17307eab39ab6107e8899845ad3d59bd9653f200f220920489ca2b5937696c31'
-    ),
-    ContractURI: new LogEvent<[]>(
-        abi, '0xff4ccd353885f015d383bdfcccc32f90e1573a6ec9da3c355dc74a39e1021059'
-    ),
-    DefaultSecondarySaleFeeSet: new LogEvent<([feeRecipient: string, feeValueBps: ethers.BigNumber] & {feeRecipient: string, feeValueBps: ethers.BigNumber})>(
-        abi, '0xc5a3de264c7115a3d08b8ba57f7d3f4efbcf494312fce7c24acfe935f75cade8'
     ),
     Lock: new LogEvent<([supply: ethers.BigNumber] & {supply: ethers.BigNumber})>(
         abi, '0x57424d5909ad92dd80fbaa1967a047a5975a0e9bb94726d561734e667cdf4227'
@@ -29,24 +23,15 @@ export const events = {
     RoleRevoked: new LogEvent<([role: string, account: string, sender: string] & {role: string, account: string, sender: string})>(
         abi, '0xf6391f5c32d9c69d2a47ea670b442974b53935d1edc7fd64eb21e047a839171b'
     ),
-    TokenSecondarySaleFeeSet: new LogEvent<([tokenId: ethers.BigNumber, feeRecipient: string, feeValueBps: ethers.BigNumber] & {tokenId: ethers.BigNumber, feeRecipient: string, feeValueBps: ethers.BigNumber})>(
-        abi, '0x576fe5b7a8860eef1cf7b8d1e3701966622376d327f441f38a46b5353c8beb98'
+    SecondarySaleFee: new LogEvent<([feeRecipient: string, feeValueBps: ethers.BigNumber] & {feeRecipient: string, feeValueBps: ethers.BigNumber})>(
+        abi, '0xff1fd4151acecc8a2e88c4741c30f16103d745f2a593af078b174b4bce0cf08d'
     ),
     Transfer: new LogEvent<([from: string, to: string, tokenId: ethers.BigNumber] & {from: string, to: string, tokenId: ethers.BigNumber})>(
         abi, '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
     ),
-    URI: new LogEvent<([tokenId: ethers.BigNumber] & {tokenId: ethers.BigNumber})>(
-        abi, '0x901e1c01b493ffa41590ea147378e25dde9601a9390b52eb75d4e0e2118a44a5'
-    ),
-    URIAll: new LogEvent<[]>(
-        abi, '0x9bf13f1005bf8940f6b531a89ba63b7fbd1b63269d49cc5612e9268b07d2527d'
-    ),
 }
 
 export const functions = {
-    ADMIN_ROLE: new Func<[], {}, string>(
-        abi, '0x75b238fc'
-    ),
     COMPOSITE_CREATOR_ROLE: new Func<[], {}, string>(
         abi, '0xda143236'
     ),
@@ -56,14 +41,11 @@ export const functions = {
     GOVERNANCE_ROLE: new Func<[], {}, string>(
         abi, '0xf36c8f5c'
     ),
-    MANAGER_ROLE: new Func<[], {}, string>(
-        abi, '0xec87621c'
-    ),
     MINTER_ROLE: new Func<[], {}, string>(
         abi, '0xd5391393'
     ),
-    VERSION: new Func<[], {}, number>(
-        abi, '0xffa1ad74'
+    OPERATOR_ROLE: new Func<[], {}, string>(
+        abi, '0xf5b541a6'
     ),
     approve: new Func<[to: string, tokenId: ethers.BigNumber], {to: string, tokenId: ethers.BigNumber}, []>(
         abi, '0x095ea7b3'
@@ -116,23 +98,11 @@ export const functions = {
     globalCompositeTokenURIBase: new Func<[], {}, string>(
         abi, '0x5c3e0c44'
     ),
-    globalTokenURIBase: new Func<[], {}, string>(
-        abi, '0x862f4cb2'
-    ),
-    globalTransformationTokenURIBase: new Func<[], {}, string>(
-        abi, '0x4c162916'
-    ),
     grantRole: new Func<[role: string, account: string], {role: string, account: string}, []>(
         abi, '0x2f2ff15d'
     ),
     hasRole: new Func<[role: string, account: string], {role: string, account: string}, boolean>(
         abi, '0x91d14854'
-    ),
-    initialize: new Func<[addresses: Array<string>, name: string, symbol: string, _decimals: number, _contractURI: string, _defaultTokenURI: string, _proxyRegistryAddress: string], {addresses: Array<string>, name: string, symbol: string, _decimals: number, _contractURI: string, _defaultTokenURI: string, _proxyRegistryAddress: string}, []>(
-        abi, '0x1d41d7da'
-    ),
-    initialized: new Func<[], {}, boolean>(
-        abi, '0x158ef93e'
     ),
     isApprovedForAll: new Func<[_owner: string, _operator: string], {_owner: string, _operator: string}, boolean>(
         abi, '0xe985e9c5'
@@ -152,9 +122,6 @@ export const functions = {
     mintDefault: new Func<[to: string], {to: string}, []>(
         abi, '0x1ad33033'
     ),
-    mintWithRoyalty: new Func<[to: string, _customTokenURI: string, _feeRecipient: string, _feeValueBps: ethers.BigNumber], {to: string, _customTokenURI: string, _feeRecipient: string, _feeValueBps: ethers.BigNumber}, []>(
-        abi, '0x4d248dc7'
-    ),
     name: new Func<[], {}, string>(
         abi, '0x06fdde03'
     ),
@@ -173,7 +140,7 @@ export const functions = {
     revokeRole: new Func<[role: string, account: string], {role: string, account: string}, []>(
         abi, '0xd547741f'
     ),
-    royaltyInfo: new Func<[_tokenId: ethers.BigNumber, _salePrice: ethers.BigNumber], {_tokenId: ethers.BigNumber, _salePrice: ethers.BigNumber}, ([receiver: string, royaltyAmount: ethers.BigNumber] & {receiver: string, royaltyAmount: ethers.BigNumber})>(
+    royaltyInfo: new Func<[_: ethers.BigNumber, _salePrice: ethers.BigNumber], {_salePrice: ethers.BigNumber}, ([receiver: string, royaltyAmount: ethers.BigNumber] & {receiver: string, royaltyAmount: ethers.BigNumber})>(
         abi, '0x2a55205a'
     ),
     'safeTransferFrom(address,address,uint256)': new Func<[from: string, to: string, tokenId: ethers.BigNumber], {from: string, to: string, tokenId: ethers.BigNumber}, []>(
@@ -182,7 +149,7 @@ export const functions = {
     'safeTransferFrom(address,address,uint256,bytes)': new Func<[from: string, to: string, tokenId: ethers.BigNumber, data: string], {from: string, to: string, tokenId: ethers.BigNumber, data: string}, []>(
         abi, '0xb88d4fde'
     ),
-    secondarySaleFee: new Func<[_tokenId: ethers.BigNumber], {_tokenId: ethers.BigNumber}, [_: string, _: ethers.BigNumber]>(
+    secondarySaleFee: new Func<[_: ethers.BigNumber], {}, [_: string, _: ethers.BigNumber]>(
         abi, '0x4322d9b7'
     ),
     setApprovalForAll: new Func<[operator: string, approved: boolean], {operator: string, approved: boolean}, []>(
@@ -197,38 +164,20 @@ export const functions = {
     setCustomTokenURI: new Func<[_id: ethers.BigNumber, _customTokenURI: string], {_id: ethers.BigNumber, _customTokenURI: string}, []>(
         abi, '0x851fc4b6'
     ),
-    setCustomTransformationTokenURI: new Func<[_id: ethers.BigNumber, _customTransformationTokenURIBase: string], {_id: ethers.BigNumber, _customTransformationTokenURIBase: string}, []>(
-        abi, '0x2ab10e6d'
-    ),
-    setDefaultRoyaltyFee: new Func<[_feeRecipient: string, _feeValueBps: ethers.BigNumber], {_feeRecipient: string, _feeValueBps: ethers.BigNumber}, []>(
-        abi, '0xa4ba2ebe'
-    ),
     setDefaultTokenURI: new Func<[_defaultTokenURI: string], {_defaultTokenURI: string}, []>(
         abi, '0xa125c824'
     ),
     setERC2665Handler: new Func<[_erc2665Handler: string], {_erc2665Handler: string}, []>(
         abi, '0x9b5b8d86'
     ),
-    setExtensionTokenURI: new Func<[_extension: string], {_extension: string}, []>(
-        abi, '0xd3152ebc'
-    ),
-    setExtensionTransformationTokenURI: new Func<[_extension: string], {_extension: string}, []>(
-        abi, '0xac530616'
+    setFee: new Func<[_feeRecipient: string, _feeValueBps: ethers.BigNumber], {_feeRecipient: string, _feeValueBps: ethers.BigNumber}, []>(
+        abi, '0xe55156b5'
     ),
     setGlobalCompositeTokenURIBase: new Func<[_globalCompositeTokenURIBase: string], {_globalCompositeTokenURIBase: string}, []>(
         abi, '0xb36d0f87'
     ),
-    setGlobalTokenURIBase: new Func<[_globalTokenURIBase: string], {_globalTokenURIBase: string}, []>(
-        abi, '0x6dc00d95'
-    ),
-    setGlobalTransformationTokenURIBase: new Func<[_globalTransformationTokenURIBase: string], {_globalTransformationTokenURIBase: string}, []>(
-        abi, '0x96776340'
-    ),
     setProxyRegistryAddress: new Func<[_proxyRegistryAddress: string], {_proxyRegistryAddress: string}, []>(
         abi, '0xd26ea6c0'
-    ),
-    setTokenRoyaltyFee: new Func<[_tokenId: ethers.BigNumber, _feeRecipient: string, _feeValueBps: ethers.BigNumber], {_tokenId: ethers.BigNumber, _feeRecipient: string, _feeValueBps: ethers.BigNumber}, []>(
-        abi, '0xddba347f'
     ),
     setTransferListener: new Func<[_transferListener: string], {_transferListener: string}, []>(
         abi, '0x2376bf3f'
@@ -242,6 +191,12 @@ export const functions = {
     symbol: new Func<[], {}, string>(
         abi, '0x95d89b41'
     ),
+    tokenByIndex: new Func<[index: ethers.BigNumber], {index: ethers.BigNumber}, ethers.BigNumber>(
+        abi, '0x4f6ccce7'
+    ),
+    tokenOfOwnerByIndex: new Func<[owner: string, index: ethers.BigNumber], {owner: string, index: ethers.BigNumber}, ethers.BigNumber>(
+        abi, '0x2f745c59'
+    ),
     tokenURI: new Func<[tokenId: ethers.BigNumber], {tokenId: ethers.BigNumber}, string>(
         abi, '0xc87b56dd'
     ),
@@ -254,19 +209,12 @@ export const functions = {
     transferListener: new Func<[], {}, string>(
         abi, '0x538ee007'
     ),
-    transformationURI: new Func<[tokenId: ethers.BigNumber], {tokenId: ethers.BigNumber}, string>(
-        abi, '0x4f98a3cf'
-    ),
     uri: new Func<[tokenId: ethers.BigNumber], {tokenId: ethers.BigNumber}, string>(
         abi, '0x0e89341c'
     ),
 }
 
 export class Contract extends ContractBase {
-
-    ADMIN_ROLE(): Promise<string> {
-        return this.eth_call(functions.ADMIN_ROLE, [])
-    }
 
     COMPOSITE_CREATOR_ROLE(): Promise<string> {
         return this.eth_call(functions.COMPOSITE_CREATOR_ROLE, [])
@@ -280,16 +228,12 @@ export class Contract extends ContractBase {
         return this.eth_call(functions.GOVERNANCE_ROLE, [])
     }
 
-    MANAGER_ROLE(): Promise<string> {
-        return this.eth_call(functions.MANAGER_ROLE, [])
-    }
-
     MINTER_ROLE(): Promise<string> {
         return this.eth_call(functions.MINTER_ROLE, [])
     }
 
-    VERSION(): Promise<number> {
-        return this.eth_call(functions.VERSION, [])
+    OPERATOR_ROLE(): Promise<string> {
+        return this.eth_call(functions.OPERATOR_ROLE, [])
     }
 
     balanceOf(owner: string): Promise<ethers.BigNumber> {
@@ -348,20 +292,8 @@ export class Contract extends ContractBase {
         return this.eth_call(functions.globalCompositeTokenURIBase, [])
     }
 
-    globalTokenURIBase(): Promise<string> {
-        return this.eth_call(functions.globalTokenURIBase, [])
-    }
-
-    globalTransformationTokenURIBase(): Promise<string> {
-        return this.eth_call(functions.globalTransformationTokenURIBase, [])
-    }
-
     hasRole(role: string, account: string): Promise<boolean> {
         return this.eth_call(functions.hasRole, [role, account])
-    }
-
-    initialized(): Promise<boolean> {
-        return this.eth_call(functions.initialized, [])
     }
 
     isApprovedForAll(_owner: string, _operator: string): Promise<boolean> {
@@ -392,12 +324,12 @@ export class Contract extends ContractBase {
         return this.eth_call(functions.proxyRegistry, [])
     }
 
-    royaltyInfo(_tokenId: ethers.BigNumber, _salePrice: ethers.BigNumber): Promise<([receiver: string, royaltyAmount: ethers.BigNumber] & {receiver: string, royaltyAmount: ethers.BigNumber})> {
-        return this.eth_call(functions.royaltyInfo, [_tokenId, _salePrice])
+    royaltyInfo(arg0: ethers.BigNumber, _salePrice: ethers.BigNumber): Promise<([receiver: string, royaltyAmount: ethers.BigNumber] & {receiver: string, royaltyAmount: ethers.BigNumber})> {
+        return this.eth_call(functions.royaltyInfo, [arg0, _salePrice])
     }
 
-    secondarySaleFee(_tokenId: ethers.BigNumber): Promise<[_: string, _: ethers.BigNumber]> {
-        return this.eth_call(functions.secondarySaleFee, [_tokenId])
+    secondarySaleFee(arg0: ethers.BigNumber): Promise<[_: string, _: ethers.BigNumber]> {
+        return this.eth_call(functions.secondarySaleFee, [arg0])
     }
 
     supportsInterface(interfaceId: string): Promise<boolean> {
@@ -406,6 +338,14 @@ export class Contract extends ContractBase {
 
     symbol(): Promise<string> {
         return this.eth_call(functions.symbol, [])
+    }
+
+    tokenByIndex(index: ethers.BigNumber): Promise<ethers.BigNumber> {
+        return this.eth_call(functions.tokenByIndex, [index])
+    }
+
+    tokenOfOwnerByIndex(owner: string, index: ethers.BigNumber): Promise<ethers.BigNumber> {
+        return this.eth_call(functions.tokenOfOwnerByIndex, [owner, index])
     }
 
     tokenURI(tokenId: ethers.BigNumber): Promise<string> {
@@ -418,10 +358,6 @@ export class Contract extends ContractBase {
 
     transferListener(): Promise<string> {
         return this.eth_call(functions.transferListener, [])
-    }
-
-    transformationURI(tokenId: ethers.BigNumber): Promise<string> {
-        return this.eth_call(functions.transformationURI, [tokenId])
     }
 
     uri(tokenId: ethers.BigNumber): Promise<string> {
