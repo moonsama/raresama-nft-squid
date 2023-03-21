@@ -36,7 +36,7 @@ import { AddLogItem } from "@subsquid/evm-processor/lib/interfaces/dataSelection
 
 const database = new TypeormDatabase();
 const processor = new EvmBatchProcessor()
-  // .setBlockRange({ from: 2592645 })
+  //.setBlockRange({ from: 2592645 })
   .setDataSource({
     chain: config.CHAIN_RPC,
     archive: "https://exosama.archive.subsquid.io/",

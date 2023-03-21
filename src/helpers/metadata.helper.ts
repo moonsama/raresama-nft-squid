@@ -44,18 +44,24 @@ const addFailedFetch = (url: string) => {
   return tries
 }
 
-export const sanitizeIpfsUrl = (ipfsUrl: string): string => {
-  const reg1 = /^ipfs:\/\/ipfs/
+export const sanitizeIpfsUrl = (ipfsUrl: string, baseUrl: string): string => {
+  const reg1 = /^ipfs:\/\/ipfs/;
+  const reg2 = /^ipfs:\/\/\//;
+  const urlRegex = /^(https?:\/\/)/;
+
   if (reg1.test(ipfsUrl)) {
-    return ipfsUrl.replace('ipfs://', BASE_URL)
+    return ipfsUrl.replace('ipfs://', baseUrl);
   }
 
-  const reg2 = /^ipfs:\/\//
   if (reg2.test(ipfsUrl)) {
-    return ipfsUrl.replace('ipfs://', `${BASE_URL}ipfs/`)
+    return ipfsUrl.replace('ipfs://', `${baseUrl}ipfs/`);
   }
 
-  return ipfsUrl
+  if (!urlRegex.test(ipfsUrl)) {
+    return 'https://' + ipfsUrl;
+  }
+
+  return ipfsUrl;
 }
 
 export const fetchMetadata = async (
@@ -63,13 +69,13 @@ export const fetchMetadata = async (
   ctx: LogContext,
   url: string
 ): Promise<IRawMetadata | null> => {
-  const properUrl = sanitizeIpfsUrl(url)
+  const properUrl = sanitizeIpfsUrl(url, BASE_URL)
   if (isUrlBanned(properUrl)) {
     ctx.log.warn(`[IPFS] SKIP DUE TO TRIES LIMIT ${properUrl}`)
     return null
   }
   try {
-    const { status, data } = await api.get(sanitizeIpfsUrl(properUrl))
+    const { status, data } = await api.get(sanitizeIpfsUrl(properUrl, BASE_URL))
     ctx.log.info(`[IPFS] ${status} ${properUrl}`)
     if (status < 400) {
       return data as IRawMetadata
@@ -134,13 +140,13 @@ export const fetchContractMetadata = async (
   ctx: LogContext,
   url: string
 ): Promise<ContractMetadata | undefined> => {
-  const properUrl = sanitizeIpfsUrl(url)
+  const properUrl = sanitizeIpfsUrl(url, BASE_URL)
   if (isUrlBanned(properUrl)) {
     ctx.log.warn(`[IPFS] SKIP DUE TO TRIES LIMIT ${properUrl}`)
     return undefined
   }
   try {
-    const { status, data } = await api.get(sanitizeIpfsUrl(properUrl))
+    const { status, data } = await api.get(sanitizeIpfsUrl(properUrl, BASE_URL))
     ctx.log.info(`[IPFS] ${status} ${properUrl}`)
     if (status < 400) {
       return {

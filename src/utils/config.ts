@@ -34,5 +34,5 @@ export const ContractNFT = {
 }
 
 export const CONTRACT_BLACKLIST = [
-  "0x54350AdE8650Fe470993AF0e2bDb8B1197ffAB0B" //DeGenerousDAO
+  ""
 ].map(c => c.toLowerCase())
