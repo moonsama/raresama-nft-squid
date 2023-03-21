@@ -46,21 +46,15 @@ const addFailedFetch = (url: string) => {
 
 export const sanitizeIpfsUrl = (ipfsUrl: string, baseUrl: string): string => {
   const reg1 = /^ipfs:\/\/ipfs/;
-  const reg2 = /^ipfs:\/\/\//;
+  const reg2 = /^ipfs:\/\//;
   const urlRegex = /^(https?:\/\/)/;
-
   if (reg1.test(ipfsUrl)) {
     return ipfsUrl.replace('ipfs://', baseUrl);
-  }
-
-  if (reg2.test(ipfsUrl)) {
+  } else if (reg2.test(ipfsUrl)) {
     return ipfsUrl.replace('ipfs://', `${baseUrl}ipfs/`);
-  }
-
-  if (!urlRegex.test(ipfsUrl)) {
+  } else if (!urlRegex.test(ipfsUrl)) {
     return 'https://' + ipfsUrl;
   }
-
   return ipfsUrl;
 }
 
