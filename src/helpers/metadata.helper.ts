@@ -17,7 +17,7 @@ import { CONTRACT_API_BATCH_SIZE, IPFS_API_BATCH_SIZE } from '../utils/config'
 import { LogContext, LogContextWithoutItem } from '../processor';
 import { BlockHandlerContext, CommonHandlerContext, EvmBlock } from '@subsquid/evm-processor'
 import { Store } from '@subsquid/typeorm-store'
-export const BASE_URL = 'https://moonsama.mypinata.cloud/'
+export const BASE_URL = 'https://gateway.moonsama.com/'
 
 export const api = Axios.create({
   baseURL: BASE_URL,
