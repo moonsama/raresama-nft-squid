@@ -10,7 +10,7 @@ import * as collectionFactory from '../abi/FactoryV1'
 import * as raresamaCollection from '../abi/CollectionV2'
 
 import { contracts } from '../utils/entitiesManager'
-import { EXCLUDE_ADDRESS } from '../utils/config'
+import { CONTRACT_BLACKLIST, EXCLUDE_ADDRESS } from '../utils/config'
 
 export async function handleCollectionAddedWithoutConstructor(
   // ctx: LogHandlerContext<Store>
@@ -26,7 +26,6 @@ export async function handleCollectionAddedWithoutConstructor(
   // console.log("transaction", transaction);
   // console.log("block", block);
   const event = evmLog as EvmLog;
-  const contractAddress = evmLog.address.toLowerCase();
   //console.log("contract address", contractAddress);
   const data = collectionFactory.events.CollectionAddedWithoutConstructor.decode(event)
   const address = data.collectionAddress.toLowerCase()
@@ -38,14 +37,26 @@ export async function handleCollectionAddedWithoutConstructor(
   const contractAPI = new raresamaCollection.Contract(ctx, block, address)
 
 
-  const [name, symbol, contractURI, decimals] = await Promise.all([
+
+  const [name, symbol, contractURI] = await Promise.all([
     contractAPI.name() ?? "",
     contractAPI.symbol() ?? "",
     contractAPI.contractURI() ?? "",
-    contractAPI.decimals() ?? 0,
   ])
-  ctx.log.info(`collectionAddedWithoutConstructor:: [NEW COLLECTION] name: ${name} symbol: ${symbol} contractURI: ${contractURI} decimals: ${decimals} contractAddress: ${contractAddress}`)
 
+  let decimals = 0
+  try {
+    decimals = await contractAPI.decimals() ?? 0
+  } catch (e) { }
+
+
+  if (CONTRACT_BLACKLIST.includes(address.toLowerCase())) {
+    ctx.log.info(`collectionAddedWithoutConstructor:: [BLACKLISTED] [NEW COLLECTION] name: ${name} symbol: ${symbol} contractURI: ${contractURI} decimals: ${decimals} contractAddress: ${address}`)
+    return
+  } else {
+    ctx.log.info(`collectionAddedWithoutConstructor:: [NEW COLLECTION] name: ${name} symbol: ${symbol} contractURI: ${contractURI} decimals: ${decimals} contractAddress: ${address}`)
+
+  }
   const contract = new Contract({
     id: address,
     factoryId: data.id.toBigInt(),
