@@ -37,7 +37,7 @@ import { CONTRACTS_CREATED_OUTSIDE_FACTORY } from "./utils/config";
 
 const database = new TypeormDatabase();
 const processor = new EvmBatchProcessor()
-  //.setBlockRange({ from: 2549156 })
+  .setBlockRange({ from: 2627839 })
   .setDataSource({
     chain: config.CHAIN_RPC,
     archive: "https://exosama.archive.subsquid.io/",
