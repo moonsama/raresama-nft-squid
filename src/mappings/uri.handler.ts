@@ -28,8 +28,10 @@ export async function handleUri(
     TOKEN_RELATIONS,
     true
   )
-  assert(token)
-  tokens.addToUriUpdatedBuffer(token)
-  ctx.log.info(`Token URI updated - ${token.id}`)
-  tokens.save(token)
+  if (token) {
+    tokens.addToUriUpdatedBuffer(token)
+    ctx.log.info(`Token URI updated - ${token.id}`)
+    tokens.save(token)
+  }
+
 }
