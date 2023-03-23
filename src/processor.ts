@@ -33,10 +33,11 @@ import { isKnownContract, updateTokenMetadata } from "./helpers";
 import { updateAllMetadata } from "./helpers/metadata.helper";
 import { BlockHandlerContext } from "@subsquid/substrate-processor";
 import { AddLogItem } from "@subsquid/evm-processor/lib/interfaces/dataSelection";
+import { CONTRACTS_CREATED_OUTSIDE_FACTORY } from "./utils/config";
 
 const database = new TypeormDatabase();
 const processor = new EvmBatchProcessor()
-  //.setBlockRange({ from: 2592645 })
+  //.setBlockRange({ from: 2549156 })
   .setDataSource({
     chain: config.CHAIN_RPC,
     archive: "https://exosama.archive.subsquid.io/",
@@ -46,26 +47,6 @@ const processor = new EvmBatchProcessor()
       [
         collectionFactory.events.CollectionAdded.topic,
         collectionFactory.events.CollectionAddedWithoutConstructor.topic,
-      ],
-    ],
-    data: {
-      evmLog: {
-        topics: true,
-        data: true,
-      },
-      transaction: {
-        hash: true,
-      },
-    },
-  })
-
-  .addLog(config.PODS_ADDRESS, {
-    filter: [
-      [
-        raresamaCollection.events.Transfer.topic,
-        raresamaCollection.events.URI.topic,
-        raresamaCollection.events.URIAll.topic,
-        raresamaCollection.events.ContractURI.topic,
       ],
     ],
     data: {
@@ -145,36 +126,35 @@ async function handleEvmLog(ctx: LogContext) {
   const contractAddress = evmLog.address.toLowerCase();
   const args = evmLog;
 
-  if (contractAddress.toLowerCase() === config.PODS_ADDRESS.toLowerCase() && config.PODS_HEIGHT <= ctx.block.height) {
-    switch (args.topics[0]) {
-      case raresamaCollectionV1.events.Transfer.topic:
-        await handleTransfer(ctx);
-        break;
-      default:
-    }
-  }
 
+  const isCollectionAdded = contractAddress === config.FACTORY_ADDRESS && collectionFactory.events.CollectionAdded.topic === args.topics[0]
+  const isCollectionAddedWithoutConstructor = contractAddress === config.FACTORY_ADDRESS && collectionFactory.events.CollectionAddedWithoutConstructor.topic === args.topics[0]
   // Get collections with the factory
-  if (contractAddress === config.FACTORY_ADDRESS && collectionFactory.events.CollectionAdded.topic === args.topics[0]) {
+  if (isCollectionAdded) {
     await handleCollectionAdded(ctx);
-  } else if (contractAddress === config.FACTORY_ADDRESS && collectionFactory.events.CollectionAddedWithoutConstructor.topic === args.topics[0]) {
+  } else if (isCollectionAddedWithoutConstructor) {
     await handleCollectionAddedWithoutConstructor(ctx);
-  } else if (
-    await isKnownContract(ctx.store, contractAddress, ctx.block.height)
-  )
-    switch (args.topics[0]) {
-      case raresamaCollectionV1.events.Transfer.topic:
-        await handleTransfer(ctx);
-        break;
-      case raresamaCollection.events.URI.topic:
-        await handleUri(ctx);
-        break;
-      case raresamaCollection.events.URIAll.topic:
-        await handleUriAll(ctx);
-        break;
-      case raresamaCollection.events.ContractURI.topic:
-        await handleContractUri(ctx);
-        break;
-      default:
+  } else {
+    const isKnown = await isKnownContract(ctx.store, contractAddress, ctx.block.height)
+    //contracts that were added to factory after the contract had already minted and or transferred tokens
+    const createdOutsideFactory = CONTRACTS_CREATED_OUTSIDE_FACTORY.includes(contractAddress.toLowerCase())
+    if (isKnown || createdOutsideFactory) {
+      switch (args.topics[0]) {
+        case raresamaCollectionV1.events.Transfer.topic:
+          await handleTransfer(ctx);
+          break;
+        case raresamaCollection.events.URI.topic:
+          await handleUri(ctx);
+          break;
+        case raresamaCollection.events.URIAll.topic:
+          await handleUriAll(ctx);
+          break;
+        case raresamaCollection.events.ContractURI.topic:
+          await handleContractUri(ctx);
+          break;
+        default:
+      }
     }
+
+  }
 }

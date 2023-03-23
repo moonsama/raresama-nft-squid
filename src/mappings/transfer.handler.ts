@@ -42,6 +42,11 @@ export async function handleTransfer(
   )) as Contract
   if (!contractEntity) {
     let lenCollection = await ctx.store.count(Contract)
+
+    let decimals = 0
+    try {
+      decimals = await contractAPI.decimals() ?? 0
+    } catch (e) { }
     contractEntity = new Contract({
       id: address,
       factoryId: ethers.BigNumber.from(lenCollection).toBigInt(),
@@ -49,7 +54,7 @@ export async function handleTransfer(
       symbol: await contractAPI.symbol(),
       totalSupply: 0n,
       contractURI: await contractAPI.contractURI(),
-      decimals: await contractAPI.decimals(),
+      decimals,
       startBlock: ctx.block.height,
       contractURIUpdated: BigInt(block.timestamp),
       uniqueOwnersCount: 0,

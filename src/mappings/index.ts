@@ -1,6 +1,6 @@
 export * from './collectionAdded.handler'
 export * from './collectionAddedWithoutConstructor.handler'
-export * from './tranfer.handler'
+export * from './transfer.handler'
 export * from './uri.handler'
 export * from './uriAll.handler'
 export * from './contractUri.handler'

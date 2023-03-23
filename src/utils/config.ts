@@ -33,6 +33,12 @@ export const ContractNFT = {
   PODS: '0xaa821f830beff26626379d840621b92911ea53b7'
 }
 
+export const CONTRACTS_CREATED_OUTSIDE_FACTORY = [
+  "0xaa821f830beff26626379d840621b92911ea53b7", //PODS
+  "0x54350AdE8650Fe470993AF0e2bDb8B1197ffAB0B" //degenerousDAO
+
+].map(c => c.toLowerCase())
+
 export const CONTRACT_BLACKLIST = [
   ""
 ].map(c => c.toLowerCase())
