@@ -16,15 +16,13 @@ export async function handleContractUri(
   const { evmLog, store } = ctx
   // const evmLog = event.args.log || event.args
   const address = (<string>evmLog.address).toLowerCase()
-  console.log("Before get")
   let contract = await contracts.get(
     store,
     Contract,
     address,
     undefined,
-    true
+    false
   )
-  console.log("after get")
 
   if (!contract) {
     const { evmLog, store, transaction, block } = ctx;

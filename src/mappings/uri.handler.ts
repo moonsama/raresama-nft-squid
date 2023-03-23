@@ -26,7 +26,7 @@ export async function handleUri(
     Token,
     tokenAddress,
     TOKEN_RELATIONS,
-    true
+    false
   )
   if (token) {
     tokens.addToUriUpdatedBuffer(token)
