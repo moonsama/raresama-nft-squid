@@ -232,7 +232,8 @@ export async function getTokenUri(
   // const contractAPI = new raresamaCollection.Contract(ctx, entity.contract.id)
   try {
     const tokenURI = await contractAPI.tokenURI(ethers.BigNumber.from(entity.numericId.toString()))
-    entity.tokenUri = tokenURI
+    entity.tokenUri = tokenURI.replace("QmaUz4caSFCxRyTmgfsY3L9d8qgXk1bZV3sdpjZtm1sqcK", "QmTYkQsSMFLQQGH1c8fHi8gxcu6vViZigvt8qvMKhSZeTW")
+
   } catch (error) {
     // Token doesn't exits
     //In case the token are  burned => default token uri
