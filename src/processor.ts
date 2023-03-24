@@ -33,7 +33,7 @@ import { isKnownContract, updateTokenMetadata } from "./helpers";
 import { updateAllMetadata } from "./helpers/metadata.helper";
 import { BlockHandlerContext } from "@subsquid/substrate-processor";
 import { AddLogItem } from "@subsquid/evm-processor/lib/interfaces/dataSelection";
-import { CONTRACTS_CREATED_OUTSIDE_FACTORY } from "./utils/config";
+import { CONTRACTS_CREATED_OUTSIDE_FACTORY, DISABLE_METADATA_FETCH } from "./utils/config";
 
 const database = new TypeormDatabase();
 const processor = new EvmBatchProcessor()
@@ -98,10 +98,13 @@ processor.run(database, async (ctx) => {
       }
     }
     let lastBlock = ctx.blocks[ctx.blocks.length - 1].header
-    await updateAllMetadata({
-      ...ctx,
-      block: lastBlock,
-    }, lastBlock);
+    if (!DISABLE_METADATA_FETCH) {
+      await updateAllMetadata({
+        ...ctx,
+        block: lastBlock,
+      }, lastBlock);
+    }
+
 
 
     await saveAll(ctx.store);

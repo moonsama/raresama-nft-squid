@@ -42,3 +42,5 @@ export const CONTRACTS_CREATED_OUTSIDE_FACTORY = [
 export const CONTRACT_BLACKLIST = [
   "0x54350AdE8650Fe470993AF0e2bDb8B1197ffAB0B" //degenerousDAO first run not used
 ].map(c => c.toLowerCase())
+
+export const DISABLE_METADATA_FETCH = false

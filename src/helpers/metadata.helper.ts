@@ -44,6 +44,10 @@ const addFailedFetch = (url: string) => {
   return tries
 }
 
+const banUrl = (url: string) => {
+  urlBlackList.set(url, BLACKLIST_TRIES_TRASHOLD + 1)
+}
+
 export const sanitizeIpfsUrl = (ipfsUrl: string, baseUrl: string): string => {
   const reg1 = /^ipfs:\/\/ipfs/;
   const reg2 = /^ipfs:\/\//;
@@ -75,10 +79,16 @@ export const fetchMetadata = async (
       return data as IRawMetadata
     }
   } catch (e) {
+    const errStr = String(e)
     const tries = addFailedFetch(properUrl)
     ctx.log.warn(
       `[IPFS] ERROR ${properUrl} ${tries} TRY ${(e as Error).message}`
     )
+
+    if (errStr.includes(`failed with status code 404`)) {
+      ctx.log.warn(`[IPFS] BANNING ${properUrl} BECAUSE 404`)
+      banUrl(properUrl)
+    }
   }
   return null
 }
@@ -153,10 +163,16 @@ export const fetchContractMetadata = async (
       }
     }
   } catch (e) {
+    const errStr = String(e)
+
     const tries = addFailedFetch(properUrl)
     ctx.log.warn(
       `[IPFS] ERROR ${properUrl} ${tries} TRY ${(e as Error).message}`
     )
+    if (errStr.includes(`failed with status code 404`)) {
+      ctx.log.warn(`[IPFS] BANNING ${properUrl} BECAUSE 404`)
+      banUrl(properUrl)
+    }
   }
   return undefined
 }
