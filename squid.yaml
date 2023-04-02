@@ -2,7 +2,7 @@
 
 manifestVersion: subsquid.io/v0.1
 name: raresama-nft-exosama
-version: 3
+version: 5
 description: |-
   A indexer for all nft in Raresama marketplace
 build:
@@ -18,16 +18,4 @@ deploy:
   processor:
     cmd: ["node", "lib/processor"]
   api:
-    cmd:
-      [
-        "npx",
-        "squid-graphql-server",
-        "--dumb-cache",
-        "in-memory",
-        "--dumb-cache-ttl",
-        "1000",
-        "--dumb-cache-size",
-        "100",
-        "--dumb-cache-max-age",
-        "1000",
-      ]
+    cmd: ["npx", "squid-graphql-server", "--dumb-cache", "in-memory", "--dumb-cache-ttl", "1000", "--dumb-cache-size", "100", "--dumb-cache-max-age", "1000"]

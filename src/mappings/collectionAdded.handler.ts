@@ -10,7 +10,7 @@ import * as collectionFactory from '../abi/FactoryV1'
 import * as raresamaCollection from '../abi/CollectionV2'
 
 import { contracts } from '../utils/entitiesManager'
-import { EXCLUDE_ADDRESS } from '../utils/config'
+import { CONTRACT_BLACKLIST, EXCLUDE_ADDRESS } from '../utils/config'
 
 export async function handleCollectionAdded(
   // ctx: LogHandlerContext<Store>
@@ -66,7 +66,15 @@ export async function handleCollectionAdded(
   //   contractAPI.contractURI() ?? "",
   //   contractAPI.decimals() ?? "",
   // ])
-  ctx.log.info(`collectionAddedHandler:: [NEW COLLECTION] name: ${data?.name} symbol: ${data?.symbols} contractURI: ${data?._contractURI} decimals: ${data?._decimals} contractAddress: ${contractAddress}`)
+
+  if (CONTRACT_BLACKLIST.includes(address.toLowerCase())) {
+    ctx.log.info(`collectionAddedHandler:: [BLACKLISTED] name: ${data?.name} symbol: ${data?.symbols} contractURI: ${data?._contractURI} decimals: ${data?._decimals} contractAddress: ${contractAddress}`)
+    return
+  } else {
+    ctx.log.info(`collectionAddedHandler:: [NEW COLLECTION] name: ${data?.name} symbol: ${data?.symbols} contractURI: ${data?._contractURI} decimals: ${data?._decimals} contractAddress: ${contractAddress}`)
+
+  }
+
 
   const contract = new Contract({
     id: address,
