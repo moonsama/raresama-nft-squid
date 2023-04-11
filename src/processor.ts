@@ -37,7 +37,7 @@ import { CONTRACTS_CREATED_OUTSIDE_FACTORY, DISABLE_METADATA_FETCH } from "./uti
 
 const database = new TypeormDatabase();
 const processor = new EvmBatchProcessor()
-  //.setBlockRange({ from: 2780161 })
+  // .setBlockRange({ from: 2898779 })
   .setDataSource({
     chain: config.CHAIN_RPC,
     archive: "https://exosama.archive.subsquid.io/",

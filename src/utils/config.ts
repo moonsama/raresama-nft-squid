@@ -35,13 +35,14 @@ export const ContractNFT = {
 
 export const CONTRACTS_CREATED_OUTSIDE_FACTORY = [
   "0xaa821f830beff26626379d840621b92911ea53b7", //PODS
-  "0x1aCB10DBD319DA52D941DFEC478f1aA2D118D7F7" //degenerousDAO
-
+  "0x1aCB10DBD319DA52D941DFEC478f1aA2D118D7F7", //degenerousDAO
+  "0x41a9c9dac4d16e5f6ed2b1bd1e8645a150f86186" //trippy trunks
 ].map(c => c.toLowerCase())
 
 export const CONTRACT_BLACKLIST = [
   "0x54350AdE8650Fe470993AF0e2bDb8B1197ffAB0B", //degenerousDAO first run not used
-  "0xbc70b2da1fa3df3b8f22f5ae322e53564ec13245"
+  "0xbc70b2da1fa3df3b8f22f5ae322e53564ec13245",
+  "0xcf9e2a5440073c427fb916dd86dcd78e03ad907a" //trippy trunks contract created through governance
 ].map(c => c.toLowerCase())
 
 export const DISABLE_METADATA_FETCH = false
