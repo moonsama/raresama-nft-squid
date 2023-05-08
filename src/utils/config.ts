@@ -36,7 +36,8 @@ export const ContractNFT = {
 export const CONTRACTS_CREATED_OUTSIDE_FACTORY = [
   "0xaa821f830beff26626379d840621b92911ea53b7", //PODS
   "0x1aCB10DBD319DA52D941DFEC478f1aA2D118D7F7", //degenerousDAO
-  "0x41a9c9dac4d16e5f6ed2b1bd1e8645a150f86186" //trippy trunks
+  "0x41a9c9dac4d16e5f6ed2b1bd1e8645a150f86186", //trippy trunks
+  "0xe170B5B0D507B3E0ce3d51C043175E0A39f78B9F" //rareships
 ].map(c => c.toLowerCase())
 
 export const CONTRACT_BLACKLIST = [
