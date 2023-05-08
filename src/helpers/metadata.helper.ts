@@ -235,7 +235,7 @@ export async function getTokenUri(
     if (!tokenURI) {
       entity.tokenUri = "ipfs://QmdgzLkcVuNcHar3jBYqYNrgh42giyc6n8skaesTRjZQhr"
     } else {
-      entity.tokenUri = tokenURI.replace("QmaUz4caSFCxRyTmgfsY3L9d8qgXk1bZV3sdpjZtm1sqcK", "QmTYkQsSMFLQQGH1c8fHi8gxcu6vViZigvt8qvMKhSZeTW")
+      entity.tokenUri = tokenURI.replace("QmaUz4caSFCxRyTmgfsY3L9d8qgXk1bZV3sdpjZtm1sqcK", "QmTYkQsSMFLQQGH1c8fHi8gxcu6vViZigvt8qvMKhSZeTW").replace("QmRhQsLHWjGYVbVMw9UH1bsvWGM73yEGqCtrNjfyaqo4uy", "QmdgzLkcVuNcHar3jBYqYNrgh42giyc6n8skaesTRjZQhr")
     }
 
 
