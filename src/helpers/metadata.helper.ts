@@ -100,6 +100,9 @@ export async function parseMetadata(
 ): Promise<Metadata | undefined> {
   const rawMeta = await fetchMetadata(ctx, url)
   if (!rawMeta) return undefined
+
+
+
   const metadata = new Metadata({
     id: url,
     name: rawMeta.name,
@@ -119,7 +122,7 @@ export async function parseMetadata(
           displayType: attr.display_type
             ? String(attr.display_type)
             : attr.display_type,
-          traitType: String(attr.trait_type),
+          traitType: String(attr.trait_type || attr.traitType),
           value: String(attr.value),
         })
     )

@@ -1,6 +1,7 @@
 interface IRawAttrs {
     display_type?: string
-    trait_type: string
+    trait_type?: string
+    traitType?: string
     value: string
 }
 
