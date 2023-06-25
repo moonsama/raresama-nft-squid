@@ -22,6 +22,12 @@ export class Metadata {
     image!: string | undefined | null
 
     @Column_("text", {nullable: true})
+    contentType!: string | undefined | null
+
+    @Column_("int4", {nullable: true})
+    contentLength!: number | undefined | null
+
+    @Column_("text", {nullable: true})
     externalUrl!: string | undefined | null
 
     @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.map((val: any) => val.toJSON()), from: obj => obj == null ? undefined : marshal.fromList(obj, val => new Attribute(undefined, marshal.nonNull(val)))}, nullable: true})

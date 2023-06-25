@@ -7,6 +7,8 @@ interface IRawAttrs {
 
 export interface IRawMetadata {
     image: string
+    contentType: string
+    contentLength: number
     name: string
     description: string
     external_url: string

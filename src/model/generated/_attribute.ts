@@ -3,14 +3,14 @@ import * as marshal from "./marshal"
 
 export class Attribute {
     private _displayType!: string | undefined | null
-    private _traitType!: string
+    private _traitType!: string | undefined | null
     private _value!: string
 
     constructor(props?: Partial<Omit<Attribute, 'toJSON'>>, json?: any) {
         Object.assign(this, props)
         if (json != null) {
             this._displayType = json.displayType == null ? undefined : marshal.string.fromJSON(json.displayType)
-            this._traitType = marshal.string.fromJSON(json.traitType)
+            this._traitType = json.traitType == null ? undefined : marshal.string.fromJSON(json.traitType)
             this._value = marshal.string.fromJSON(json.value)
         }
     }
@@ -23,12 +23,11 @@ export class Attribute {
         this._displayType = value
     }
 
-    get traitType(): string {
-        assert(this._traitType != null, 'uninitialized access')
+    get traitType(): string | undefined | null {
         return this._traitType
     }
 
-    set traitType(value: string) {
+    set traitType(value: string | undefined | null) {
         this._traitType = value
     }
 

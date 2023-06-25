@@ -54,6 +54,12 @@ export class Contract {
     image!: string | undefined | null
 
     @Column_("text", {nullable: true})
+    contentType!: string | undefined | null
+
+    @Column_("int4", {nullable: true})
+    contentLength!: number | undefined | null
+
+    @Column_("text", {nullable: true})
     externalLink!: string | undefined | null
 
     @Index_()

@@ -1,22 +1,17 @@
 import https from 'https'
 import Axios from 'axios'
 import assert from 'assert'
-import { BigNumber, ethers } from 'ethers'
-import { Attribute, Contract, Metadata, Token } from '../model'
-import { IRawMetadata } from '../types/custom/metadata'
-import {
-  contracts,
-  EntitiesCache,
-  EntityWithId,
-  metadatas,
-  tokens,
-} from '../utils/entitiesManager'
+import {ethers} from 'ethers'
+import {Attribute, Contract, Metadata, Token} from '../model'
+import {IRawMetadata} from '../types/custom/metadata'
+import {contracts, EntitiesCache, EntityWithId, metadatas, tokens,} from '../utils/entitiesManager'
 // import * as raresamaCollection from '../types/generated/raresama-collection'
-import { ABI_JSON as ABI_COLLECTION } from '../abi/CollectionV2.abi'
-import { CONTRACT_API_BATCH_SIZE, IPFS_API_BATCH_SIZE } from '../utils/config'
-import { LogContext, LogContextWithoutItem } from '../processor';
-import { BlockHandlerContext, CommonHandlerContext, EvmBlock } from '@subsquid/evm-processor'
-import { Store } from '@subsquid/typeorm-store'
+import {ABI_JSON as ABI_COLLECTION} from '../abi/CollectionV2.abi'
+import {CONTRACT_API_BATCH_SIZE, IPFS_API_BATCH_SIZE} from '../utils/config'
+import {LogContext} from '../processor';
+import {EvmBlock} from '@subsquid/evm-processor'
+import {contentType} from "../utils/contentType";
+
 export const BASE_URL = 'https://gateway.moonsama.com/'
 
 export const api = Axios.create({
@@ -26,7 +21,7 @@ export const api = Axios.create({
   },
   withCredentials: false,
   timeout: 5000,
-  httpsAgent: new https.Agent({ keepAlive: true }),
+  httpsAgent: new https.Agent({keepAlive: true}),
 })
 
 const urlBlackList = new Map<string, number>()
@@ -73,10 +68,13 @@ export const fetchMetadata = async (
     return null
   }
   try {
-    const { status, data } = await api.get(sanitizeIpfsUrl(properUrl, BASE_URL))
+    const {status, data} = await api.get(sanitizeIpfsUrl(properUrl, BASE_URL))
     ctx.log.info(`[IPFS] ${status} ${properUrl}`)
     if (status < 400) {
-      return data as IRawMetadata
+      return {
+        ...(await contentType(sanitizeIpfsUrl(data.image, BASE_URL))),
+        ...data
+      } as IRawMetadata
     }
   } catch (e) {
     const errStr = String(e)
@@ -102,12 +100,13 @@ export async function parseMetadata(
   if (!rawMeta) return undefined
 
 
-
   const metadata = new Metadata({
     id: url,
     name: rawMeta.name,
     description: rawMeta.description,
     image: rawMeta.image,
+    contentType: rawMeta.contentType,
+    contentLength: rawMeta.contentLength,
     externalUrl: rawMeta.external_url,
     layers: rawMeta.layers,
     artist: rawMeta.artist,
@@ -138,6 +137,8 @@ interface ContractMetadata {
   description: string
   image: string
   externalLink: string
+  contentType?: string | null
+  contentLength?: number | null
   artist?: string
   artistUrl?: string
 }
@@ -153,10 +154,11 @@ export const fetchContractMetadata = async (
     return undefined
   }
   try {
-    const { status, data } = await api.get(sanitizeIpfsUrl(properUrl, BASE_URL))
+    const {status, data} = await api.get(sanitizeIpfsUrl(properUrl, BASE_URL))
     ctx.log.info(`[IPFS] ${status} ${properUrl}`)
     if (status < 400) {
       return {
+        ...(await contentType(sanitizeIpfsUrl(data.image, BASE_URL))),
         name: data.name,
         description: data.description,
         image: data.image,
@@ -279,6 +281,7 @@ export async function fillTokenMetadata<T extends Token>(
     ctx.log.info(`Metadata updated for token - ${entity.id}`)
   }
 }
+
 async function fillContractMetadata<T extends Contract>(
   // ctx: CommonHandlerContext<Store>,
   ctx: LogContext,
@@ -294,6 +297,8 @@ async function fillContractMetadata<T extends Contract>(
     entity.externalLink = rawMetadata.externalLink
     entity.description = rawMetadata.description
     entity.image = rawMetadata.image
+    entity.contentType = rawMetadata.contentType
+    entity.contentLength = rawMetadata.contentLength
     manager.save(entity)
     manager.delFromUriUpdatedBuffer(entity)
     ctx.log.info(`Metadata updated for contract - ${entity.id}`)

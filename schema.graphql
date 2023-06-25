@@ -1,8 +1,9 @@
+# noinspection GraphQLUnresolvedReference,GraphQLMissingType
 type Attribute {
   # display_type field of metadata attributes
   displayType: String
   # trait_type field of metadata attributes
-  traitType: String!
+  traitType: String
   value: String!
 }
 
@@ -12,6 +13,8 @@ type Metadata @entity {
   name: String @index
   description: String
   image: String
+  contentType: String
+  contentLength: Int
   # external_url field of metadata
   externalUrl: String
   attributes: [Attribute!]
@@ -73,6 +76,8 @@ type Contract @entity {
   metadataName: String @index
   description: String
   image: String
+  contentType: String
+  contentLength: Int
   externalLink: String
   artist: String @index
   artistUrl: String
